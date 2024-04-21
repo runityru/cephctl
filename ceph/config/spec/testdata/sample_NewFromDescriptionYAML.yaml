@@ -1,0 +1,7 @@
+---
+kind: CephConfig
+spec:
+  global:
+    rbd_cache: "true"
+  osd:
+    rocksdb_perf: "true"

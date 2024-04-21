@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo '[{"section":"osd.1","name":"osd_mclock_max_capacity_iops_ssd","value":"64146.504458","level":"basic","can_update_at_runtime":true,"mask":""},{"section":"osd.10","name":"osd_mclock_max_capacity_iops_ssd","value":"41328.971657","level":"basic","can_update_at_runtime":true,"mask":""}]'

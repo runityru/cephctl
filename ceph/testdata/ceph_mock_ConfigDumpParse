@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo '[{"section":"client.radosgw","name":"rgw_cache_lru_size","value":"100000","level":"advanced","can_update_at_runtime":true,"mask":""}]'

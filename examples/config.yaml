@@ -1,0 +1,10 @@
+---
+kind: CephConfig
+spec:
+  global:
+    rbd_cache: "true"
+  client.radosgw:
+    rgw_cache_lru_size: 100
+    rgw_crypt_require_ssl: "true"
+  osd:
+    rocksdb_perf: "true"
