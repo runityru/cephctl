@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/teran/cephctl/ceph/config/spec"
@@ -51,6 +52,9 @@ func Diff(ctx context.Context, ac DiffConfig) error {
 				color.Red("- %s %s", change.Section, change.Key)
 			}
 		}
+
+	default:
+		return errors.Errorf("unexpected specification kind: `%s`", kind)
 	}
 
 	return nil
