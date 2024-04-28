@@ -1,4 +1,4 @@
-package ceph
+package models
 
 type ConfigOption struct {
 	Section            string `json:"section"`

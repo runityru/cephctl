@@ -10,6 +10,7 @@ import (
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
+	cephModels "github.com/teran/cephctl/ceph/models"
 	"github.com/teran/cephctl/models"
 )
 
@@ -43,7 +44,7 @@ func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value st
 }
 
 func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
-	cfg := []ConfigOption{}
+	cfg := []cephModels.ConfigOption{}
 	buf := &bytes.Buffer{}
 
 	args := []string{"config", "dump", "--format=json"}
