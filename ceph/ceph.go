@@ -29,6 +29,19 @@ func New(binaryPath string) Ceph {
 	}
 }
 
+func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value string) error {
+	args := []string{"config", "set", section, key, value}
+
+	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
+
+	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd.Stderr = os.Stdout
+	if err := cmd.Run(); err != nil {
+		return errors.Wrap(err, "error applying configuration")
+	}
+	return nil
+}
+
 func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
 	cfg := []ConfigOption{}
 	buf := &bytes.Buffer{}
@@ -59,19 +72,6 @@ func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
 	}
 
 	return out, nil
-}
-
-func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value string) error {
-	args := []string{"config", "set", section, key, value}
-
-	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
-
-	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
-	cmd.Stderr = os.Stdout
-	if err := cmd.Run(); err != nil {
-		return errors.Wrap(err, "error applying configuration")
-	}
-	return nil
 }
 
 func (c *ceph) RemoveCephConfigOption(ctx context.Context, section, key string) error {

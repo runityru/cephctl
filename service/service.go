@@ -13,9 +13,9 @@ import (
 )
 
 type Service interface {
+	ApplyCephConfig(ctx context.Context, cfg models.CephConfig) error
 	DiffCephConfig(ctx context.Context, cfg models.CephConfig) ([]models.CephConfigDifference, error)
 	DumpConfig(ctx context.Context) (models.CephConfig, error)
-	ApplyCephConfig(ctx context.Context, cfg models.CephConfig) error
 }
 
 type service struct {
@@ -26,10 +26,6 @@ func New(c ceph.Ceph) Service {
 	return &service{
 		c: c,
 	}
-}
-
-func (s *service) DumpConfig(ctx context.Context) (models.CephConfig, error) {
-	return s.c.DumpConfig(ctx)
 }
 
 func (s *service) ApplyCephConfig(ctx context.Context, cfg models.CephConfig) error {
@@ -115,4 +111,8 @@ func (s *service) DiffCephConfig(ctx context.Context, cfg models.CephConfig) ([]
 	}
 
 	return changes, nil
+}
+
+func (s *service) DumpConfig(ctx context.Context) (models.CephConfig, error) {
+	return s.c.DumpConfig(ctx)
 }
