@@ -53,7 +53,6 @@ func TestClusterStatus(t *testing.T) {
 		MGRsDownAmount: 0,
 		MDSsDownAmount: 0,
 		OSDsDownAmount: 0,
-		RGWsDownAmount: 0,
 	}, st)
 }
 

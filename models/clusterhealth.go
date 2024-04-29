@@ -33,12 +33,6 @@ const (
 	// Dangerous: n/a
 	ClusterHealthIndicatorTypeOSDsDown ClusterHealthIndicatorType = "OSD_DOWN"
 
-	// ClusterHealthIndicatorTypeRGWsDown reflects amount of RGW nodes which are down
-	// Good: 0
-	// AtRisk: >0
-	// Dangerous: n/a
-	ClusterHealthIndicatorTypeRGWsDown ClusterHealthIndicatorType = "RGW_DOWN"
-
 	// ClusterHealthIndicatorTypeMDSsDown reflects amount of MDS nodes which are down
 	// Good: 0
 	// AtRisk: >0
@@ -50,6 +44,18 @@ const (
 	// AtRisk: >0
 	// Dangerous: n/a
 	ClusterHealthIndicatorTypeMutesAmount ClusterHealthIndicatorType = "MUTES_AMOUNT"
+
+	// ClusterHealthIndicatorTypeUncleanPGs reflects amount of PGs which are not in clean state
+	// Good: 0
+	// AtRisk: >0
+	// Dangerous: n/a
+	ClusterHealthIndicatorTypeUncleanPGs ClusterHealthIndicatorType = "UNCLEAN_PGS"
+
+	// ClusterHealthIndicatorTypeInactivePGs reflects amount of PGs which are not in active state
+	// Good: 0
+	// AtRisk: >0
+	// Dangerous: n/a
+	ClusterHealthIndicatorTypeInactivePGs ClusterHealthIndicatorType = "INACTIVE_PGS"
 )
 
 type ClusterHealthIndicatorStatus string

@@ -65,9 +65,10 @@ func (s *service) CheckClusterHealth(ctx context.Context) ([]models.ClusterHealt
 		clusterHealth.MonsDown,
 		clusterHealth.MgrsDown,
 		clusterHealth.OSDsDown,
-		clusterHealth.RGWsDown,
 		clusterHealth.MDSsDown,
 		clusterHealth.MutesAmount,
+		clusterHealth.UncleanPGs,
+		clusterHealth.InactivePGs,
 	}
 
 	indicators := []models.ClusterHealthIndicator{}

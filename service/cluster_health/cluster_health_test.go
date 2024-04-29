@@ -223,43 +223,6 @@ func TestOSDsDown(t *testing.T) {
 	}
 }
 
-func TestRGWsDown(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "all rgws are alive",
-			in: models.ClusterStatus{
-				RGWsDownAmount: 0,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeRGWsDown,
-				CurrentValue:       "0",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-		{
-			name: "some rgws are down",
-			in: models.ClusterStatus{
-				RGWsDownAmount: 3,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeRGWsDown,
-				CurrentValue:       "3",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := RGWsDown(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
 func TestMDSsDown(t *testing.T) {
 	tcs := []testCase{
 		{
@@ -333,6 +296,80 @@ func TestMutesAmount(t *testing.T) {
 			r := require.New(t)
 
 			i, err := MutesAmount(context.Background(), tc.in)
+			r.NoError(err)
+			r.Equal(tc.expOut, i)
+		})
+	}
+}
+
+func TestUncleanPGs(t *testing.T) {
+	tcs := []testCase{
+		{
+			name: "no unclean pgs",
+			in: models.ClusterStatus{
+				UncleanPGs: 0,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
+				CurrentValue:       "0",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			},
+		},
+		{
+			name: "some unclean pgs",
+			in: models.ClusterStatus{
+				UncleanPGs: 3,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
+				CurrentValue:       "3",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			i, err := UncleanPGs(context.Background(), tc.in)
+			r.NoError(err)
+			r.Equal(tc.expOut, i)
+		})
+	}
+}
+
+func TestInactivePGs(t *testing.T) {
+	tcs := []testCase{
+		{
+			name: "no inactive pgs",
+			in: models.ClusterStatus{
+				InactivePGs: 0,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
+				CurrentValue:       "0",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			},
+		},
+		{
+			name: "some inactive pgs",
+			in: models.ClusterStatus{
+				InactivePGs: 3,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
+				CurrentValue:       "3",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			i, err := InactivePGs(context.Background(), tc.in)
 			r.NoError(err)
 			r.Equal(tc.expOut, i)
 		})

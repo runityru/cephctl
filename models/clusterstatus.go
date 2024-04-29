@@ -30,5 +30,6 @@ type ClusterStatus struct {
 	MGRsDownAmount uint
 	MDSsDownAmount uint
 	OSDsDownAmount uint
-	RGWsDownAmount uint
+	UncleanPGs     uint
+	InactivePGs    uint
 }

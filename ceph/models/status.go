@@ -1,6 +1,10 @@
 package models
 
-import "github.com/teran/cephctl/models"
+import (
+	"strings"
+
+	"github.com/teran/cephctl/models"
+)
 
 type StatusCheckSummary struct {
 	Message string `json:"message"`
@@ -42,22 +46,24 @@ type StatusOSDMap struct {
 	NumRemappedPgs int `json:"num_remapped_pgs"`
 }
 
+type PGsInState struct {
+	StateName string `json:"state_name"`
+	Count     int    `json:"count"`
+}
+
 type StatusPGMap struct {
-	PgsByState []struct {
-		StateName string `json:"state_name"`
-		Count     int    `json:"count"`
-	} `json:"pgs_by_state"`
-	NumPgs        int   `json:"num_pgs"`
-	NumPools      int   `json:"num_pools"`
-	NumObjects    int   `json:"num_objects"`
-	DataBytes     int64 `json:"data_bytes"`
-	BytesUsed     int64 `json:"bytes_used"`
-	BytesAvail    int64 `json:"bytes_avail"`
-	BytesTotal    int64 `json:"bytes_total"`
-	ReadBytesSec  int   `json:"read_bytes_sec"`
-	WriteBytesSec int   `json:"write_bytes_sec"`
-	ReadOpPerSec  int   `json:"read_op_per_sec"`
-	WriteOpPerSec int   `json:"write_op_per_sec"`
+	PgsByState    []PGsInState `json:"pgs_by_state"`
+	NumPgs        int          `json:"num_pgs"`
+	NumPools      int          `json:"num_pools"`
+	NumObjects    int          `json:"num_objects"`
+	DataBytes     int64        `json:"data_bytes"`
+	BytesUsed     int64        `json:"bytes_used"`
+	BytesAvail    int64        `json:"bytes_avail"`
+	BytesTotal    int64        `json:"bytes_total"`
+	ReadBytesSec  int          `json:"read_bytes_sec"`
+	WriteBytesSec int          `json:"write_bytes_sec"`
+	ReadOpPerSec  int          `json:"read_op_per_sec"`
+	WriteOpPerSec int          `json:"write_op_per_sec"`
 }
 
 type StatusFSMapByRank struct {
@@ -142,6 +148,27 @@ func (st *Status) ToSvc() (models.ClusterStatus, error) {
 	monsDown := st.MonMap.NumMons - len(st.QuorumNames)
 	osdsDown := st.OSDMap.NumOsds - st.OSDMap.NumUpOsds
 
+	var mgrsDown uint = 0
+	if !st.MgrMap.Available {
+		mgrsDown++
+	}
+
+	mdsDown := st.FSMap.Max - st.FSMap.Up
+
+	pgStates := map[string]uint{
+		"clean":  0,
+		"active": 0,
+	}
+	for _, pg := range st.PGMap.PgsByState {
+		for _, state := range strings.Split(pg.StateName, "+") {
+			if _, ok := pgStates[state]; !ok {
+				pgStates[state] = 0
+			}
+
+			pgStates[state] += uint(pg.Count)
+		}
+	}
+
 	return models.ClusterStatus{
 		HealthStatus:   csh,
 		Checks:         checks,
@@ -149,9 +176,10 @@ func (st *Status) ToSvc() (models.ClusterStatus, error) {
 		MonsTotal:      uint(st.MonMap.NumMons),
 		QuorumAmount:   uint(len(st.QuorumNames)),
 		MonsDownAmount: uint(monsDown),
-		MGRsDownAmount: 0,
-		MDSsDownAmount: 0,
+		MGRsDownAmount: mgrsDown,
+		MDSsDownAmount: uint(mdsDown),
 		OSDsDownAmount: uint(osdsDown),
-		RGWsDownAmount: 0,
+		UncleanPGs:     uint(st.PGMap.NumPgs) - pgStates["clean"],
+		InactivePGs:    uint(st.PGMap.NumPgs) - pgStates["active"],
 	}, nil
 }

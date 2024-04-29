@@ -92,19 +92,6 @@ func OSDsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealt
 	}, nil
 }
 
-func RGWsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
-	st := models.ClusterHealthIndicatorStatusGood
-	if cs.RGWsDownAmount > 0 {
-		st = models.ClusterHealthIndicatorStatusAtRisk
-	}
-
-	return models.ClusterHealthIndicator{
-		Indicator:          models.ClusterHealthIndicatorTypeRGWsDown,
-		CurrentValue:       strconv.FormatUint(uint64(cs.RGWsDownAmount), 10),
-		CurrentValueStatus: st,
-	}, nil
-}
-
 func MDSsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
 	if cs.MDSsDownAmount > 0 {
@@ -131,5 +118,31 @@ func MutesAmount(ctx context.Context, cs models.ClusterStatus) (models.ClusterHe
 		Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
 		CurrentValue:       "0",
 		CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+	}, nil
+}
+
+func UncleanPGs(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+	st := models.ClusterHealthIndicatorStatusGood
+	if cs.UncleanPGs > 0 {
+		st = models.ClusterHealthIndicatorStatusAtRisk
+	}
+
+	return models.ClusterHealthIndicator{
+		Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
+		CurrentValue:       strconv.FormatUint(uint64(cs.UncleanPGs), 10),
+		CurrentValueStatus: st,
+	}, nil
+}
+
+func InactivePGs(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+	st := models.ClusterHealthIndicatorStatusGood
+	if cs.InactivePGs > 0 {
+		st = models.ClusterHealthIndicatorStatusAtRisk
+	}
+
+	return models.ClusterHealthIndicator{
+		Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
+		CurrentValue:       strconv.FormatUint(uint64(cs.InactivePGs), 10),
+		CurrentValueStatus: st,
 	}, nil
 }

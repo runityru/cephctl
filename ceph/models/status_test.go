@@ -14,9 +14,17 @@ func TestStatusMapperEmpty(t *testing.T) {
 	out, err := in.ToSvc()
 	r.NoError(err)
 	r.Equal(models.ClusterStatus{
-		HealthStatus: models.ClusterStatusHealthUnknown,
-		Checks:       []models.ClusterStatusCheck{},
-		MutedChecks:  []models.ClusterStatusMutedCheck{},
+		HealthStatus:   models.ClusterStatusHealthUnknown,
+		Checks:         []models.ClusterStatusCheck{},
+		MutedChecks:    []models.ClusterStatusMutedCheck{},
+		QuorumAmount:   0,
+		MonsTotal:      0,
+		MonsDownAmount: 0,
+		MGRsDownAmount: 1,
+		MDSsDownAmount: 0,
+		OSDsDownAmount: 0,
+		UncleanPGs:     0,
+		InactivePGs:    0,
 	}, out)
 }
 
@@ -36,6 +44,26 @@ func TestStatusMapper(t *testing.T) {
 				},
 			},
 		},
+		QuorumNames: []string{"host1", "host2", "host3", "host4", "host5"},
+		MgrMap: StatusMgrMap{
+			Available: true,
+		},
+		MonMap: StatusMonMap{
+			NumMons: 5,
+		},
+		PGMap: StatusPGMap{
+			NumPgs: 44,
+			PgsByState: []PGsInState{
+				{
+					StateName: "active+degraded",
+					Count:     10,
+				},
+				{
+					StateName: "activating+clean",
+					Count:     15,
+				},
+			},
+		},
 	}
 
 	out, err := in.ToSvc()
@@ -49,6 +77,14 @@ func TestStatusMapper(t *testing.T) {
 				Summary:  "some message",
 			},
 		},
-		MutedChecks: []models.ClusterStatusMutedCheck{},
+		MutedChecks:    []models.ClusterStatusMutedCheck{},
+		QuorumAmount:   5,
+		MonsTotal:      5,
+		MonsDownAmount: 0,
+		MGRsDownAmount: 0,
+		MDSsDownAmount: 0,
+		OSDsDownAmount: 0,
+		UncleanPGs:     29,
+		InactivePGs:    34,
 	}, out)
 }
