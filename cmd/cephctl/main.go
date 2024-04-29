@@ -11,6 +11,7 @@ import (
 	applyCmd "github.com/teran/cephctl/commands/apply"
 	diffCmd "github.com/teran/cephctl/commands/diff"
 	dumpCephConfigCmd "github.com/teran/cephctl/commands/dump/cephconfig"
+	healthcheckCmd "github.com/teran/cephctl/commands/healthcheck"
 	"github.com/teran/cephctl/service"
 )
 
@@ -47,6 +48,8 @@ var (
 
 	dump           = app.Command("dump", "Dump runtime configuration")
 	dumpCephConfig = dump.Command("cephconfig", "dump Ceph runtime configuration")
+
+	healthcheck = app.Command("healthcheck", "Perform a cluster healthcheck and print report")
 
 	version = app.Command("version", "Print version and exit")
 )
@@ -89,6 +92,11 @@ func main() {
 		if err := dumpCephConfigCmd.DumpCephConfig(ctx, dumpCephConfigCmd.DumpCephConfigConfig{
 			Service: svc,
 		}); err != nil {
+			panic(err)
+		}
+
+	case healthcheck.FullCommand():
+		if err := healthcheckCmd.Healthcheck(ctx, svc); err != nil {
 			panic(err)
 		}
 

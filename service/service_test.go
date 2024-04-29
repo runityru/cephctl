@@ -11,22 +11,6 @@ import (
 	ptr "github.com/teran/go-ptr"
 )
 
-func (s *serviceTestSuite) TestDumpConfig() {
-	s.cephMock.On("DumpConfig").Return(models.CephConfig{
-		"osd": {
-			"test_key": "value",
-		},
-	}, nil).Once()
-
-	cfg, err := s.svc.DumpConfig(s.ctx)
-	s.Require().NoError(err)
-	s.Require().Equal(models.CephConfig{
-		"osd": {
-			"test_key": "value",
-		},
-	}, cfg)
-}
-
 func (s *serviceTestSuite) TestApplyCephConfig() {
 	s.cephMock.On("DumpConfig").Return(models.CephConfig{
 		"osd": {
@@ -50,6 +34,59 @@ func (s *serviceTestSuite) TestApplyCephConfig() {
 		},
 	})
 	s.Require().NoError(err)
+}
+
+func (s *serviceTestSuite) TestCheckClusterHealth() {
+	s.cephMock.On("ClusterStatus").Return(models.ClusterStatus{
+		HealthStatus: models.ClusterStatusHealthOK,
+		MutedChecks:  []models.ClusterStatusMutedCheck{},
+		QuorumAmount: 5,
+	}, nil).Once()
+
+	chi, err := s.svc.CheckClusterHealth(s.ctx)
+	s.Require().NoError(err)
+	s.Require().Equal([]models.ClusterHealthIndicator{
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeClusterStatus,
+			CurrentValue:       "HEALTH_OK",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeQuorum,
+			CurrentValue:       "5",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeMonsDown,
+			CurrentValue:       "0",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeMgrsDown,
+			CurrentValue:       "0",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
+			CurrentValue:       "0",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeRGWsDown,
+			CurrentValue:       "0",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeMDSsDown,
+			CurrentValue:       "0",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
+			CurrentValue:       "0",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+	}, chi)
 }
 
 func (s *serviceTestSuite) TestDiffCephConfig() {
@@ -91,6 +128,22 @@ func (s *serviceTestSuite) TestDiffCephConfig() {
 			Key:     "test_key",
 		},
 	}, diff)
+}
+
+func (s *serviceTestSuite) TestDumpConfig() {
+	s.cephMock.On("DumpConfig").Return(models.CephConfig{
+		"osd": {
+			"test_key": "value",
+		},
+	}, nil).Once()
+
+	cfg, err := s.svc.DumpConfig(s.ctx)
+	s.Require().NoError(err)
+	s.Require().Equal(models.CephConfig{
+		"osd": {
+			"test_key": "value",
+		},
+	}, cfg)
 }
 
 // Definitions ...

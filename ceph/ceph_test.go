@@ -21,6 +21,42 @@ func TestApplyCephConfigOption(t *testing.T) {
 	r.NoError(err)
 }
 
+func TestClusterStatus(t *testing.T) {
+	r := require.New(t)
+
+	c := New("testdata/ceph_mock_ClusterStatus")
+	st, err := c.ClusterStatus(context.Background())
+	r.NoError(err)
+	r.Equal(models.ClusterStatus{
+		HealthStatus: models.ClusterStatusHealthWARN,
+		Checks: []models.ClusterStatusCheck{
+			{
+				Code:     "OSD_NEARFULL",
+				Severity: models.ClusterStatusHealthWARN,
+				Summary:  "13 nearfull osd(s)",
+			},
+			{
+				Code:     "POOL_NEARFULL",
+				Severity: models.ClusterStatusHealthWARN,
+				Summary:  "14 pool(s) nearfull",
+			},
+		},
+		MutedChecks: []models.ClusterStatusMutedCheck{
+			{
+				Code:    "OSD_NEARFULL",
+				Summary: "13 nearfull osd(s)",
+			},
+		},
+		MonsTotal:      5,
+		QuorumAmount:   5,
+		MonsDownAmount: 0,
+		MGRsDownAmount: 0,
+		MDSsDownAmount: 0,
+		OSDsDownAmount: 0,
+		RGWsDownAmount: 0,
+	}, st)
+}
+
 func TestDumpConfig(t *testing.T) {
 	r := require.New(t)
 

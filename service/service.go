@@ -6,15 +6,17 @@ import (
 	"github.com/pkg/errors"
 	diff "github.com/r3labs/diff/v3"
 	log "github.com/sirupsen/logrus"
+	ptr "github.com/teran/go-ptr"
 
 	"github.com/teran/cephctl/ceph"
 	"github.com/teran/cephctl/models"
-	ptr "github.com/teran/go-ptr"
+	clusterHealth "github.com/teran/cephctl/service/cluster_health"
 )
 
 type Service interface {
 	ApplyCephConfig(ctx context.Context, cfg models.CephConfig) error
 	DiffCephConfig(ctx context.Context, cfg models.CephConfig) ([]models.CephConfigDifference, error)
+	CheckClusterHealth(ctx context.Context) ([]models.ClusterHealthIndicator, error)
 	DumpConfig(ctx context.Context) (models.CephConfig, error)
 }
 
@@ -49,6 +51,36 @@ func (s *service) ApplyCephConfig(ctx context.Context, cfg models.CephConfig) er
 		}
 	}
 	return nil
+}
+
+func (s *service) CheckClusterHealth(ctx context.Context) ([]models.ClusterHealthIndicator, error) {
+	cs, err := s.c.ClusterStatus(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "error retrieving cluster status")
+	}
+
+	checks := []clusterHealth.ClusterHealthCheck{
+		clusterHealth.ClusterStatus,
+		clusterHealth.Quorum,
+		clusterHealth.MonsDown,
+		clusterHealth.MgrsDown,
+		clusterHealth.OSDsDown,
+		clusterHealth.RGWsDown,
+		clusterHealth.MDSsDown,
+		clusterHealth.MutesAmount,
+	}
+
+	indicators := []models.ClusterHealthIndicator{}
+	for _, checkFunc := range checks {
+		indicator, err := checkFunc(ctx, cs)
+		if err != nil {
+			return nil, err
+		}
+
+		indicators = append(indicators, indicator)
+	}
+
+	return indicators, nil
 }
 
 func (s *service) DiffCephConfig(ctx context.Context, cfg models.CephConfig) ([]models.CephConfigDifference, error) {

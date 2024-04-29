@@ -16,6 +16,7 @@ import (
 
 type Ceph interface {
 	ApplyCephConfigOption(ctx context.Context, section, key, value string) error
+	ClusterStatus(ctx context.Context) (models.ClusterStatus, error)
 	DumpConfig(ctx context.Context) (models.CephConfig, error)
 	RemoveCephConfigOption(ctx context.Context, section, key string) error
 }
@@ -41,6 +42,29 @@ func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value st
 		return errors.Wrap(err, "error applying configuration")
 	}
 	return nil
+}
+
+func (c ceph) ClusterStatus(ctx context.Context) (models.ClusterStatus, error) {
+	buf := &bytes.Buffer{}
+	args := []string{"status", "--format=json"}
+
+	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
+
+	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd.Stdout = buf
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return models.ClusterStatus{}, errors.Wrap(err, "error retrieving cluster status")
+	}
+
+	log.Tracef("command output: `%s`", buf.String())
+
+	st := cephModels.Status{}
+	if err := json.Unmarshal(buf.Bytes(), &st); err != nil {
+		return models.ClusterStatus{}, errors.Wrap(err, "error decoding response")
+	}
+
+	return st.ToSvc()
 }
 
 func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
