@@ -14,9 +14,10 @@ Small utility to control Ceph cluster configuration just like any other declarat
 
 
 Flags:
-  --[no-]help                    Show context-sensitive help (also try --help-long and --help-man).
-  --ceph-binary="/usr/bin/ceph"  Specify path to ceph binary
-  --[no-]trace                   Enable trace mode
+      --[no-]help   Show context-sensitive help (also try --help-long and --help-man).
+  -b, --ceph-binary="/usr/bin/ceph"
+                    Specify path to ceph binary ($CEPHCTL_CEPH_BINARY)
+  -t, --[no-]trace  Enable trace mode ($CEPHCTL_TRACE)
 
 Commands:
 help [<command>...]
@@ -30,6 +31,9 @@ diff [<flags>] <filename>
 
 dump cephconfig
     dump Ceph runtime configuration
+
+healthcheck
+    Perform a cluster healthcheck and print report
 
 version
     Print version and exit
