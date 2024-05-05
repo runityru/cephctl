@@ -35,11 +35,6 @@ func TestClusterStatus(t *testing.T) {
 				Severity: models.ClusterStatusHealthWARN,
 				Summary:  "13 nearfull osd(s)",
 			},
-			{
-				Code:     "POOL_NEARFULL",
-				Severity: models.ClusterStatusHealthWARN,
-				Summary:  "14 pool(s) nearfull",
-			},
 		},
 		MutedChecks: []models.ClusterStatusMutedCheck{
 			{
