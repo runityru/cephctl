@@ -3,8 +3,12 @@ package models
 import (
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/teran/cephctl/models"
 )
+
+var ErrUnexpectedInput = errors.New("unexpected input")
 
 type StatusCheckSummary struct {
 	Message string `json:"message"`
@@ -108,41 +112,19 @@ type Status struct {
 }
 
 func (st *Status) ToSvc() (models.ClusterStatus, error) {
-	csh := models.ClusterStatusHealthUnknown
-	switch st.Health.Status {
-	case "HEALTH_OK":
-		csh = models.ClusterStatusHealthOK
-	case "HEALTH_WARN":
-		csh = models.ClusterStatusHealthWARN
-	case "HEALTH_ERR":
-		csh = models.ClusterStatusHealthERR
+	csh, err := NewClusterStatusHealthFromString(st.Health.Status)
+	if err != nil {
+		return models.ClusterStatus{}, err
 	}
 
-	checks := []models.ClusterStatusCheck{}
-	for code, c := range st.Health.Checks {
-		severity := models.ClusterStatusHealthUnknown
-		switch c.Severity {
-		case "HEALTH_OK":
-			severity = models.ClusterStatusHealthOK
-		case "HEALTH_WARN":
-			severity = models.ClusterStatusHealthWARN
-		case "HEALTH_ERR":
-			severity = models.ClusterStatusHealthERR
-		}
-
-		checks = append(checks, models.ClusterStatusCheck{
-			Code:     code,
-			Severity: severity,
-			Summary:  c.Summary.Message,
-		})
+	checks, err := NewClusterStatusCheck(st.Health.Checks)
+	if err != nil {
+		return models.ClusterStatus{}, err
 	}
 
-	mutes := []models.ClusterStatusMutedCheck{}
-	for _, m := range st.Health.Mutes {
-		mutes = append(mutes, models.ClusterStatusMutedCheck{
-			Code:    m.Code,
-			Summary: m.Summary,
-		})
+	mutes, err := NewClusterMutedChecks(st.Health.Mutes)
+	if err != nil {
+		return models.ClusterStatus{}, err
 	}
 
 	monsDown := st.MonMap.NumMons - len(st.QuorumNames)
@@ -182,4 +164,51 @@ func (st *Status) ToSvc() (models.ClusterStatus, error) {
 		UncleanPGs:     uint(st.PGMap.NumPgs) - pgStates["clean"],
 		InactivePGs:    uint(st.PGMap.NumPgs) - pgStates["active"],
 	}, nil
+}
+
+func NewClusterStatusHealthFromString(in string) (models.ClusterStatusHealth, error) {
+	switch in {
+	case "HEALTH_OK":
+		return models.ClusterStatusHealthOK, nil
+	case "HEALTH_WARN":
+		return models.ClusterStatusHealthWARN, nil
+	case "HEALTH_ERR":
+		return models.ClusterStatusHealthERR, nil
+	}
+	return models.ClusterStatusHealthUnknown, errors.Wrap(ErrUnexpectedInput, in)
+}
+
+func NewClusterStatusCheck(in map[string]StatusCheck) ([]models.ClusterStatusCheck, error) {
+	checks := []models.ClusterStatusCheck{}
+	for code, c := range in {
+		severity := models.ClusterStatusHealthUnknown
+		switch c.Severity {
+		case "HEALTH_OK":
+			severity = models.ClusterStatusHealthOK
+		case "HEALTH_WARN":
+			severity = models.ClusterStatusHealthWARN
+		case "HEALTH_ERR":
+			severity = models.ClusterStatusHealthERR
+		}
+
+		checks = append(checks, models.ClusterStatusCheck{
+			Code:     code,
+			Severity: severity,
+			Summary:  c.Summary.Message,
+		})
+	}
+
+	return checks, nil
+}
+
+func NewClusterMutedChecks(in []StatusHealthMute) ([]models.ClusterStatusMutedCheck, error) {
+	mutes := []models.ClusterStatusMutedCheck{}
+	for _, m := range in {
+		mutes = append(mutes, models.ClusterStatusMutedCheck{
+			Code:    m.Code,
+			Summary: m.Summary,
+		})
+	}
+
+	return mutes, nil
 }

@@ -3,7 +3,10 @@ package models
 import (
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
+	"github.com/teran/go-ptr"
+
 	"github.com/teran/cephctl/models"
 )
 
@@ -11,21 +14,9 @@ func TestStatusMapperEmpty(t *testing.T) {
 	r := require.New(t)
 
 	in := Status{}
-	out, err := in.ToSvc()
-	r.NoError(err)
-	r.Equal(models.ClusterStatus{
-		HealthStatus:   models.ClusterStatusHealthUnknown,
-		Checks:         []models.ClusterStatusCheck{},
-		MutedChecks:    []models.ClusterStatusMutedCheck{},
-		QuorumAmount:   0,
-		MonsTotal:      0,
-		MonsDownAmount: 0,
-		MGRsDownAmount: 1,
-		MDSsDownAmount: 0,
-		OSDsDownAmount: 0,
-		UncleanPGs:     0,
-		InactivePGs:    0,
-	}, out)
+	_, err := in.ToSvc()
+	r.Error(err)
+	r.Equal(errors.Cause(err), ErrUnexpectedInput)
 }
 
 func TestStatusMapper(t *testing.T) {
@@ -87,4 +78,94 @@ func TestStatusMapper(t *testing.T) {
 		UncleanPGs:     29,
 		InactivePGs:    34,
 	}, out)
+}
+
+func TestNewClusterStatusHealthFromString(t *testing.T) {
+	type testCase struct {
+		in             string
+		expOut         models.ClusterStatusHealth
+		expErrorString *string
+		expErrorCause  error
+	}
+
+	tcs := []testCase{
+		{
+			in:     "HEALTH_OK",
+			expOut: models.ClusterStatusHealthOK,
+		},
+		{
+			in:     "HEALTH_WARN",
+			expOut: models.ClusterStatusHealthWARN,
+		},
+		{
+			in:     "HEALTH_ERR",
+			expOut: models.ClusterStatusHealthERR,
+		},
+		{
+			in:             "some_unexpected_health_status",
+			expOut:         models.ClusterStatusHealthUnknown,
+			expErrorString: ptr.String("some_unexpected_health_status: unexpected input"),
+			expErrorCause:  ErrUnexpectedInput,
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.in, func(t *testing.T) {
+			r := require.New(t)
+
+			ch, err := NewClusterStatusHealthFromString(tc.in)
+			if tc.expErrorString != nil {
+				r.Error(err)
+				r.Equal(*tc.expErrorString, err.Error())
+				r.EqualError(errors.Cause(err), tc.expErrorCause.Error())
+			} else {
+				r.NoError(err)
+				r.Equal(tc.expOut, ch)
+			}
+		})
+	}
+}
+
+func TestNewClusterStatusCheck(t *testing.T) {
+	r := require.New(t)
+
+	checks := map[string]StatusCheck{
+		"BLAH": {
+			Severity: "HEALTH_ERR",
+			Summary: StatusCheckSummary{
+				Message: "some message",
+				Count:   10,
+			},
+		},
+	}
+
+	cs, err := NewClusterStatusCheck(checks)
+	r.NoError(err)
+	r.Equal([]models.ClusterStatusCheck{
+		{
+			Code:     "BLAH",
+			Severity: "HEALTH_ERR",
+			Summary:  "some message",
+		},
+	}, cs)
+}
+
+func TestNewClusterMutedChecks(t *testing.T) {
+	r := require.New(t)
+
+	mutes, err := NewClusterMutedChecks([]StatusHealthMute{
+		{
+			Code:    "BLAH",
+			Sticky:  false,
+			Summary: "test mute",
+			Count:   4,
+		},
+	})
+	r.NoError(err)
+	r.Equal([]models.ClusterStatusMutedCheck{
+		{
+			Code:    "BLAH",
+			Summary: "test mute",
+		},
+	}, mutes)
 }
