@@ -2,13 +2,16 @@
 
 [![Go](https://github.com/teran/cephctl/actions/workflows/go.yml/badge.svg)](https://github.com/teran/cephctl/actions/workflows/go.yml)
 
-Small utility to control Ceph cluster configuration just like any other declarative configuration
+Small utility to control Ceph cluster configuration just like any other declarative
+    configuration
 
 ## Main features
 
-- Easy-to-use healthcheck which may contain checks against status & configuration and indicate some some not trivial issues
+- Easy-to-use healthcheck which may contain checks against status & configuration
+    and indicate some some not trivial issues
 - Declarative configuration support which is apply only if needed
-- Diff configuration: check what the difference between currently running configuration and desired or migrated from other cluster
+- Diff configuration: check what the difference between currently running configuration
+    and desired or migrated from other cluster
 
 ## Usage
 
@@ -49,9 +52,9 @@ version
 
 ## How it works
 
-Cephctl uses native Ceph CLIs to work with cluster configuration so it's required to have
-Ceph binaries w/ configured `ceph.conf`. Alternatively it's possible to adjust `ceph` binary
-path to access ceph in container and/or remote machine.
+Cephctl uses native Ceph CLIs to work with cluster configuration so it's require
+to have Ceph binaries w/ configured `ceph.conf`. Alternatively it's possible
+to adjust `ceph` binary path to access ceph in container and/or remote machine.
 
 ## Roadmap
 
@@ -63,7 +66,19 @@ path to access ceph in container and/or remote machine.
 - [ ] Apply/Dump declarative configuration for `ceph osd set-*` stuff
 - [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
 
-## Compatibility
+## Ceph compatibility
 
 All of the changes are tested against Ceph 18.2 (Reef), previous versions are
 not tested and not guaranteed to work.
+
+## Interface compatibility disclaimer
+
+If you gonna use cephctl as a library for your purposes please feel free to
+but please note a few things:
+
+1. Cephctl doesn't use internal packages to allow you to do whatever you like.
+    Cephctl project doesn't aim to limit your usage.
+2. Internal program interfaces are not guaranteed to be stable between releases
+    since they're written and serve for internal purposes.
+3. CLI interface (until 1.0.x at least) is also not guaranteed to be stable:
+    subcommands and options are subjects to change between versions.
