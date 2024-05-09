@@ -15,6 +15,7 @@ Small utility to control Ceph cluster configuration just like any other declarat
 
 ## Usage
 
+<!-- markdownlint-disable MD013 -->
 ```shell
 $ ./cephctl
 usage: cephctl [<flags>] <command> [<args> ...]
@@ -49,6 +50,7 @@ version
 
 
 ```
+<!-- markdownlint-enable MD013 -->
 
 ## How it works
 
