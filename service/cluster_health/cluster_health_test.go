@@ -237,6 +237,66 @@ func TestOSDsDown(t *testing.T) {
 	}
 }
 
+func TestOSDsMetadataSize(t *testing.T) {
+	tcs := []testCase{
+		{
+			name: "metadata size is <7%",
+			in: models.ClusterReport{
+				TotalOSDCapacityKB: 10240,
+				TotalOSDUsedMetaKB: 100,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
+				CurrentValue:       "0.98",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			},
+		},
+		{
+			name: "metadata size is >7%",
+			in: models.ClusterReport{
+				TotalOSDCapacityKB: 10240,
+				TotalOSDUsedMetaKB: 725,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
+				CurrentValue:       "7.08",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+			},
+		},
+		{
+			name: "metadata size is >10%",
+			in: models.ClusterReport{
+				TotalOSDCapacityKB: 10240,
+				TotalOSDUsedMetaKB: 1030,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
+				CurrentValue:       "10.06",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
+			},
+		},
+		{
+			name: "empty structure (division by zero provocation)",
+			in:   models.ClusterReport{},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
+				CurrentValue:       "NaN",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusUnknown,
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			i, err := OSDsMetadataSize(context.Background(), tc.in)
+			r.NoError(err)
+			r.Equal(tc.expOut, i)
+		})
+	}
+}
+
 func TestQuorum(t *testing.T) {
 	tcs := []testCase{
 		{

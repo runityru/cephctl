@@ -99,6 +99,26 @@ func OSDsDown(ctx context.Context, cr models.ClusterReport) (models.ClusterHealt
 	}, nil
 }
 
+func OSDsMetadataSize(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
+	st := models.ClusterHealthIndicatorStatusUnknown
+
+	metadataSizePercentage := 100.0 / float64(cr.TotalOSDCapacityKB) * float64(cr.TotalOSDUsedMetaKB)
+
+	if metadataSizePercentage > 10.0 {
+		st = models.ClusterHealthIndicatorStatusDangerous
+	} else if metadataSizePercentage > 7.0 {
+		st = models.ClusterHealthIndicatorStatusAtRisk
+	} else if metadataSizePercentage > 0 {
+		st = models.ClusterHealthIndicatorStatusGood
+	}
+
+	return models.ClusterHealthIndicator{
+		Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
+		CurrentValue:       strconv.FormatFloat(metadataSizePercentage, 'f', 2, 64),
+		CurrentValueStatus: st,
+	}, nil
+}
+
 func Quorum(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
 	if cr.NumMonsInQuorum < cr.NumMons {

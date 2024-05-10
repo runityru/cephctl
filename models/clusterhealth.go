@@ -39,6 +39,12 @@ const (
 	// Dangerous: n/a
 	ClusterHealthIndicatorTypeOSDsDown ClusterHealthIndicatorType = "OSD_DOWN"
 
+	// ClusterHealthIndicatorTypeOSDsMetadataSize reflects metadata size in percents of total OSD capacity
+	// Good: 0-7
+	// AtRisk: >7
+	// Dangerous: >10
+	ClusterHealthIndicatorTypeOSDsMetadataSize ClusterHealthIndicatorType = "OSD_METADATA_SIZE"
+
 	// ClusterHealthIndicatorTypeQuorum reflects monitor quorum status
 	// Good: 0
 	// AtRisk: >0

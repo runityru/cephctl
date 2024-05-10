@@ -21,6 +21,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.UncleanPGs,
 	clusterHealth.InactivePGs,
 	clusterHealth.AllowCrimson,
+	clusterHealth.OSDsMetadataSize,
 }
 
 type Service interface {
