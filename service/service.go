@@ -22,6 +22,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.InactivePGs,
 	clusterHealth.AllowCrimson,
 	clusterHealth.OSDsMetadataSize,
+	clusterHealth.OSDsNumDaemonVersions,
 }
 
 type Service interface {

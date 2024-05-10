@@ -88,6 +88,19 @@ const (
 	// Dangerous: >10
 	ClusterHealthIndicatorTypeOSDsMetadataSize ClusterHealthIndicatorType = "OSD_METADATA_SIZE"
 
+	// ClusterHealthIndicatorTypeOSDVersionMismatch indicates different versions
+	// 	of running OSD daemons at the same time
+	//
+	// Description: running different versions of components is normal only
+	// 	while upgrade procedure is a go. In all other cases daemon versions
+	// 	should match i.e. their amount must be equal 1 except the case of
+	// 	upgrade.
+	//
+	// Good: 1
+	// AtRisk: 2
+	// Dangerous: >2
+	ClusterHealthIndicatorTypeOSDsNumDaemonVersions ClusterHealthIndicatorType = "OSD_NUM_DAEMON_VERSIONS"
+
 	// ClusterHealthIndicatorTypeQuorum reflects monitor quorum status
 	//
 	// Description: monitors in quorum which should be the same as total

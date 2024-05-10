@@ -113,6 +113,11 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValue:       "2.30",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeOSDsNumDaemonVersions,
+			CurrentValue:       "1",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
 	}, chi)
 }
 
