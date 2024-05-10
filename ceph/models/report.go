@@ -28,11 +28,11 @@ type ReportMonMapMon struct {
 			Nonce int    `json:"nonce"`
 		} `json:"addrvec"`
 	} `json:"public_addrs"`
-	Addr          string `json:"addr"`
-	PublicAddr    string `json:"public_addr"`
-	Priority      int    `json:"priority"`
-	Weight        int    `json:"weight"`
-	CrushLocation string `json:"crush_location"`
+	Addr          string  `json:"addr"`
+	PublicAddr    string  `json:"public_addr"`
+	Priority      int     `json:"priority"`
+	Weight        float64 `json:"weight"`
+	CrushLocation string  `json:"crush_location"`
 }
 
 type ReportMonMap struct {
@@ -197,7 +197,7 @@ type ReportOSDMapOSD struct {
 	UUID                string                             `json:"uuid"`
 	Up                  int                                `json:"up"`
 	In                  int                                `json:"in"`
-	Weight              int                                `json:"weight"`
+	Weight              float64                            `json:"weight"`
 	PrimaryAffinity     int                                `json:"primary_affinity"`
 	LastCleanBegin      int                                `json:"last_clean_begin"`
 	LastCleanEnd        int                                `json:"last_clean_end"`
@@ -222,7 +222,7 @@ type ReportOSDMapOSDXInfo struct {
 	LaggyProbability     float64 `json:"laggy_probability"`
 	LaggyInterval        int     `json:"laggy_interval"`
 	Features             int64   `json:"features"`
-	OldWeight            int     `json:"old_weight"`
+	OldWeight            float64 `json:"old_weight"`
 	LastPurgedSnapsScrub string  `json:"last_purged_snaps_scrub"`
 	DeadEpoch            int     `json:"dead_epoch"`
 }
@@ -389,9 +389,9 @@ type ReportCRUSHMapRule struct {
 }
 
 type ReportCRUSHMapBucketItem struct {
-	ID     int `json:"id"`
-	Weight int `json:"weight"`
-	Pos    int `json:"pos"`
+	ID     int     `json:"id"`
+	Weight float64 `json:"weight"`
+	Pos    int     `json:"pos"`
 }
 
 type ReportCRUSHMapBucket struct {
@@ -399,7 +399,7 @@ type ReportCRUSHMapBucket struct {
 	Name     string                     `json:"name"`
 	TypeID   int                        `json:"type_id"`
 	TypeName string                     `json:"type_name"`
-	Weight   int                        `json:"weight"`
+	Weight   float64                    `json:"weight"`
 	Alg      string                     `json:"alg"`
 	Hash     string                     `json:"hash"`
 	Items    []ReportCRUSHMapBucketItem `json:"items"`
