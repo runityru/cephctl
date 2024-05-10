@@ -14,6 +14,43 @@ type testCase struct {
 	expOut models.ClusterHealthIndicator
 }
 
+func TestAllowCrimson(t *testing.T) {
+	tcs := []testCase{
+		{
+			name: "crimson is allowed",
+			in: models.ClusterReport{
+				AllowCrimson: true,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeAllowCrimson,
+				CurrentValue:       "true",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+			},
+		},
+		{
+			name: "crimson is disallowed",
+			in: models.ClusterReport{
+				AllowCrimson: false,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeAllowCrimson,
+				CurrentValue:       "false",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			i, err := AllowCrimson(context.Background(), tc.in)
+			r.NoError(err)
+			r.Equal(tc.expOut, i)
+		})
+	}
+}
+
 func TestClusterStatus(t *testing.T) {
 	tcs := []testCase{
 		{
@@ -73,67 +110,35 @@ func TestClusterStatus(t *testing.T) {
 	}
 }
 
-func TestQuorum(t *testing.T) {
+func TestInactivePGs(t *testing.T) {
 	tcs := []testCase{
 		{
-			name: "all in quorum",
+			name: "no inactive pgs",
 			in: models.ClusterReport{
-				NumMons:         5,
-				NumMonsInQuorum: 5,
+				NumPGs: 10,
+				NumPGsByState: map[string]uint32{
+					"active": 10,
+				},
 			},
 			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-				CurrentValue:       "5",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-		{
-			name: "some out of quorum",
-			in: models.ClusterReport{
-				NumMons:         5,
-				NumMonsInQuorum: 3,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-				CurrentValue:       "3",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := Quorum(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
-func TestOSDsDown(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "all osds are alive",
-			in: models.ClusterReport{
-				NumOSDs:   10,
-				NumOSDsUp: 10,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
+				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
 				CurrentValue:       "0",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
 		{
-			name: "some osds are down",
+			name: "some inactive pgs",
 			in: models.ClusterReport{
-				NumOSDs:   10,
-				NumOSDsUp: 7,
+				NumPGs: 10,
+				NumPGsByState: map[string]uint32{
+					"active":   7,
+					"clean":    7,
+					"degraded": 3,
+					"inactive": 3,
+				},
 			},
 			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
+				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
 				CurrentValue:       "3",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
@@ -144,7 +149,7 @@ func TestOSDsDown(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			r := require.New(t)
 
-			i, err := OSDsDown(context.Background(), tc.in)
+			i, err := InactivePGs(context.Background(), tc.in)
 			r.NoError(err)
 			r.Equal(tc.expOut, i)
 		})
@@ -193,6 +198,84 @@ func TestMutesAmount(t *testing.T) {
 	}
 }
 
+func TestOSDsDown(t *testing.T) {
+	tcs := []testCase{
+		{
+			name: "all osds are alive",
+			in: models.ClusterReport{
+				NumOSDs:   10,
+				NumOSDsUp: 10,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
+				CurrentValue:       "0",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			},
+		},
+		{
+			name: "some osds are down",
+			in: models.ClusterReport{
+				NumOSDs:   10,
+				NumOSDsUp: 7,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
+				CurrentValue:       "3",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			i, err := OSDsDown(context.Background(), tc.in)
+			r.NoError(err)
+			r.Equal(tc.expOut, i)
+		})
+	}
+}
+
+func TestQuorum(t *testing.T) {
+	tcs := []testCase{
+		{
+			name: "all in quorum",
+			in: models.ClusterReport{
+				NumMons:         5,
+				NumMonsInQuorum: 5,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
+				CurrentValue:       "5",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			},
+		},
+		{
+			name: "some out of quorum",
+			in: models.ClusterReport{
+				NumMons:         5,
+				NumMonsInQuorum: 3,
+			},
+			expOut: models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
+				CurrentValue:       "3",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			i, err := Quorum(context.Background(), tc.in)
+			r.NoError(err)
+			r.Equal(tc.expOut, i)
+		})
+	}
+}
+
 func TestUncleanPGs(t *testing.T) {
 	tcs := []testCase{
 		{
@@ -232,89 +315,6 @@ func TestUncleanPGs(t *testing.T) {
 			r := require.New(t)
 
 			i, err := UncleanPGs(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
-func TestInactivePGs(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "no inactive pgs",
-			in: models.ClusterReport{
-				NumPGs: 10,
-				NumPGsByState: map[string]uint32{
-					"active": 10,
-				},
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-				CurrentValue:       "0",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-		{
-			name: "some inactive pgs",
-			in: models.ClusterReport{
-				NumPGs: 10,
-				NumPGsByState: map[string]uint32{
-					"active":   7,
-					"clean":    7,
-					"degraded": 3,
-					"inactive": 3,
-				},
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-				CurrentValue:       "3",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := InactivePGs(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
-func TestAllowCrimson(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "crimson is allowed",
-			in: models.ClusterReport{
-				AllowCrimson: true,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeAllowCrimson,
-				CurrentValue:       "true",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-		{
-			name: "crimson is disallowed",
-			in: models.ClusterReport{
-				AllowCrimson: false,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeAllowCrimson,
-				CurrentValue:       "false",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := AllowCrimson(context.Background(), tc.in)
 			r.NoError(err)
 			r.Equal(tc.expOut, i)
 		})
