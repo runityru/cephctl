@@ -37,10 +37,37 @@ func (s *serviceTestSuite) TestApplyCephConfig() {
 }
 
 func (s *serviceTestSuite) TestCheckClusterHealth() {
-	s.cephMock.On("ClusterStatus").Return(models.ClusterStatus{
-		HealthStatus: models.ClusterStatusHealthOK,
-		MutedChecks:  []models.ClusterStatusMutedCheck{},
-		QuorumAmount: 5,
+	s.cephMock.On("ClusterReport").Return(models.ClusterReport{
+		HealthStatus:    models.ClusterStatusHealthOK,
+		Checks:          []models.ClusterStatusCheck{},
+		MutedChecks:     []models.ClusterStatusMutedCheck{},
+		NumMons:         5,
+		NumMonsInQuorum: 5,
+		NumOSDs:         15,
+		NumOSDsIn:       15,
+		NumOSDsUp:       15,
+		NumOSDsByRelease: map[string]uint16{
+			"reef": 15,
+		},
+		NumOSDsByVersion: map[string]uint16{
+			"18.2.2": 15,
+		},
+		NumOSDsByDeviceType: map[string]uint16{
+			"ssd": 15,
+		},
+		TotalOSDCapacityKB: uint64(22_321_704_960),
+		TotalOSDUsedDataKB: uint64(10_986_978_208),
+		TotalOSDUsedMetaKB: uint64(512_967_627),
+		TotalOSDUsedOMAPKB: uint64(5_822_580),
+		NumPools:           14,
+		NumPGs:             330,
+		NumPGsByState: map[string]uint32{
+			"active":        330,
+			"backfill_wait": 50,
+			"backfilling":   2,
+			"clean":         278,
+			"remapped":      52,
+		},
 	}, nil).Once()
 
 	chi, err := s.svc.CheckClusterHealth(s.ctx)
@@ -57,22 +84,7 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
-			Indicator:          models.ClusterHealthIndicatorTypeMonsDown,
-			CurrentValue:       "0",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeMgrsDown,
-			CurrentValue:       "0",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
 			Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-			CurrentValue:       "0",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeMDSsDown,
 			CurrentValue:       "0",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
@@ -83,8 +95,8 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-			CurrentValue:       "0",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			CurrentValue:       "52",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,

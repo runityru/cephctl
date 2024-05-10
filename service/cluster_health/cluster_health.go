@@ -7,109 +7,71 @@ import (
 	"github.com/teran/cephctl/models"
 )
 
-type ClusterHealthCheck func(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error)
+type ClusterHealthCheck func(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error)
 
-func ClusterStatus(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+func ClusterStatus(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	const indicator = models.ClusterHealthIndicatorTypeClusterStatus
 
-	switch cs.HealthStatus {
+	switch cr.HealthStatus {
 	case models.ClusterStatusHealthOK:
 		return models.ClusterHealthIndicator{
 			Indicator:          indicator,
-			CurrentValue:       string(cs.HealthStatus),
+			CurrentValue:       string(cr.HealthStatus),
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		}, nil
 	case models.ClusterStatusHealthWARN:
 		return models.ClusterHealthIndicator{
 			Indicator:          indicator,
-			CurrentValue:       string(cs.HealthStatus),
+			CurrentValue:       string(cr.HealthStatus),
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		}, nil
 	case models.ClusterStatusHealthERR:
 		return models.ClusterHealthIndicator{
 			Indicator:          indicator,
-			CurrentValue:       string(cs.HealthStatus),
+			CurrentValue:       string(cr.HealthStatus),
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
 		}, nil
 	}
 
 	return models.ClusterHealthIndicator{
 		Indicator:          indicator,
-		CurrentValue:       string(cs.HealthStatus),
+		CurrentValue:       string(cr.HealthStatus),
 		CurrentValueStatus: models.ClusterHealthIndicatorStatusUnknown,
 	}, nil
 }
 
-func Quorum(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+func Quorum(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
-	if cs.QuorumAmount < cs.MonsTotal {
+	if cr.NumMonsInQuorum < cr.NumMons {
 		st = models.ClusterHealthIndicatorStatusAtRisk
 	}
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-		CurrentValue:       strconv.FormatUint(uint64(cs.QuorumAmount), 10),
+		CurrentValue:       strconv.FormatUint(uint64(cr.NumMonsInQuorum), 10),
 		CurrentValueStatus: st,
 	}, nil
 }
 
-func MonsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+func OSDsDown(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
-	if cs.MonsDownAmount > 0 {
-		st = models.ClusterHealthIndicatorStatusAtRisk
-	}
-
-	return models.ClusterHealthIndicator{
-		Indicator:          models.ClusterHealthIndicatorTypeMonsDown,
-		CurrentValue:       strconv.FormatUint(uint64(cs.MonsDownAmount), 10),
-		CurrentValueStatus: st,
-	}, nil
-}
-
-func MgrsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
-	st := models.ClusterHealthIndicatorStatusGood
-	if cs.MGRsDownAmount > 0 {
-		st = models.ClusterHealthIndicatorStatusAtRisk
-	}
-
-	return models.ClusterHealthIndicator{
-		Indicator:          models.ClusterHealthIndicatorTypeMgrsDown,
-		CurrentValue:       strconv.FormatUint(uint64(cs.MGRsDownAmount), 10),
-		CurrentValueStatus: st,
-	}, nil
-}
-
-func OSDsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
-	st := models.ClusterHealthIndicatorStatusGood
-	if cs.OSDsDownAmount > 0 {
+	numOSDsDown := cr.NumOSDs - cr.NumOSDsUp
+	if numOSDsDown > 0 {
 		st = models.ClusterHealthIndicatorStatusAtRisk
 	}
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-		CurrentValue:       strconv.FormatUint(uint64(cs.OSDsDownAmount), 10),
+		CurrentValue:       strconv.FormatUint(uint64(numOSDsDown), 10),
 		CurrentValueStatus: st,
 	}, nil
 }
 
-func MDSsDown(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
-	st := models.ClusterHealthIndicatorStatusGood
-	if cs.MDSsDownAmount > 0 {
-		st = models.ClusterHealthIndicatorStatusAtRisk
-	}
-
-	return models.ClusterHealthIndicator{
-		Indicator:          models.ClusterHealthIndicatorTypeMDSsDown,
-		CurrentValue:       strconv.FormatUint(uint64(cs.MDSsDownAmount), 10),
-		CurrentValueStatus: st,
-	}, nil
-}
-
-func MutesAmount(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
-	if len(cs.MutedChecks) > 0 {
+func MutesAmount(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
+	if len(cr.MutedChecks) > 0 {
 		return models.ClusterHealthIndicator{
 			Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-			CurrentValue:       strconv.FormatInt(int64(len(cs.MutedChecks)), 10),
+			CurrentValue:       strconv.FormatInt(int64(len(cr.MutedChecks)), 10),
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		}, nil
 	}
@@ -121,28 +83,34 @@ func MutesAmount(ctx context.Context, cs models.ClusterStatus) (models.ClusterHe
 	}, nil
 }
 
-func UncleanPGs(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+func UncleanPGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
-	if cs.UncleanPGs > 0 {
+
+	cleanPGs, _ := cr.NumPGsByState["clean"]
+	uncleanPGs := cr.NumPGs - cleanPGs
+	if uncleanPGs > 0 {
 		st = models.ClusterHealthIndicatorStatusAtRisk
 	}
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-		CurrentValue:       strconv.FormatUint(uint64(cs.UncleanPGs), 10),
+		CurrentValue:       strconv.FormatUint(uint64(uncleanPGs), 10),
 		CurrentValueStatus: st,
 	}, nil
 }
 
-func InactivePGs(ctx context.Context, cs models.ClusterStatus) (models.ClusterHealthIndicator, error) {
+func InactivePGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
-	if cs.InactivePGs > 0 {
+
+	activePGs, _ := cr.NumPGsByState["active"]
+	inactivePGs := cr.NumPGs - activePGs
+	if inactivePGs > 0 {
 		st = models.ClusterHealthIndicatorStatusAtRisk
 	}
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-		CurrentValue:       strconv.FormatUint(uint64(cs.InactivePGs), 10),
+		CurrentValue:       strconv.FormatUint(uint64(inactivePGs), 10),
 		CurrentValueStatus: st,
 	}, nil
 }

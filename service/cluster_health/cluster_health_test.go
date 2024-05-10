@@ -10,7 +10,7 @@ import (
 
 type testCase struct {
 	name   string
-	in     models.ClusterStatus
+	in     models.ClusterReport
 	expOut models.ClusterHealthIndicator
 }
 
@@ -18,7 +18,7 @@ func TestClusterStatus(t *testing.T) {
 	tcs := []testCase{
 		{
 			name: "HEALTH_OK",
-			in: models.ClusterStatus{
+			in: models.ClusterReport{
 				HealthStatus: models.ClusterStatusHealthOK,
 			},
 			expOut: models.ClusterHealthIndicator{
@@ -29,7 +29,7 @@ func TestClusterStatus(t *testing.T) {
 		},
 		{
 			name: "HEALTH_WARN",
-			in: models.ClusterStatus{
+			in: models.ClusterReport{
 				HealthStatus: models.ClusterStatusHealthWARN,
 			},
 			expOut: models.ClusterHealthIndicator{
@@ -40,7 +40,7 @@ func TestClusterStatus(t *testing.T) {
 		},
 		{
 			name: "HEALTH_ERR",
-			in: models.ClusterStatus{
+			in: models.ClusterReport{
 				HealthStatus: models.ClusterStatusHealthERR,
 			},
 			expOut: models.ClusterHealthIndicator{
@@ -51,7 +51,7 @@ func TestClusterStatus(t *testing.T) {
 		},
 		{
 			name: "RANDOM_VALUE",
-			in: models.ClusterStatus{
+			in: models.ClusterReport{
 				HealthStatus: models.ClusterStatusHealthUnknown,
 			},
 			expOut: models.ClusterHealthIndicator{
@@ -77,9 +77,9 @@ func TestQuorum(t *testing.T) {
 	tcs := []testCase{
 		{
 			name: "all in quorum",
-			in: models.ClusterStatus{
-				QuorumAmount: 5,
-				MonsTotal:    5,
+			in: models.ClusterReport{
+				NumMons:         5,
+				NumMonsInQuorum: 5,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
@@ -89,9 +89,9 @@ func TestQuorum(t *testing.T) {
 		},
 		{
 			name: "some out of quorum",
-			in: models.ClusterStatus{
-				QuorumAmount: 3,
-				MonsTotal:    5,
+			in: models.ClusterReport{
+				NumMons:         5,
+				NumMonsInQuorum: 3,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
@@ -112,86 +112,13 @@ func TestQuorum(t *testing.T) {
 	}
 }
 
-func TestMonsDown(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "all mons are alive",
-			in: models.ClusterStatus{
-				MonsDownAmount: 0,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeMonsDown,
-				CurrentValue:       "0",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-		{
-			name: "some monitors are down",
-			in: models.ClusterStatus{
-				MonsDownAmount: 1,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeMonsDown,
-				CurrentValue:       "1",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := MonsDown(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
-func TestMgrsDown(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "all mgrs are alive",
-			in: models.ClusterStatus{
-				MGRsDownAmount: 0,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeMgrsDown,
-				CurrentValue:       "0",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-		{
-			name: "some mgrs are down",
-			in: models.ClusterStatus{
-				MGRsDownAmount: 3,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeMgrsDown,
-				CurrentValue:       "3",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := MgrsDown(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
 func TestOSDsDown(t *testing.T) {
 	tcs := []testCase{
 		{
 			name: "all osds are alive",
-			in: models.ClusterStatus{
-				OSDsDownAmount: 0,
+			in: models.ClusterReport{
+				NumOSDs:   10,
+				NumOSDsUp: 10,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
@@ -201,8 +128,9 @@ func TestOSDsDown(t *testing.T) {
 		},
 		{
 			name: "some osds are down",
-			in: models.ClusterStatus{
-				OSDsDownAmount: 3,
+			in: models.ClusterReport{
+				NumOSDs:   10,
+				NumOSDsUp: 7,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
@@ -223,48 +151,11 @@ func TestOSDsDown(t *testing.T) {
 	}
 }
 
-func TestMDSsDown(t *testing.T) {
-	tcs := []testCase{
-		{
-			name: "all mds are alive",
-			in: models.ClusterStatus{
-				MDSsDownAmount: 0,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeMDSsDown,
-				CurrentValue:       "0",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-			},
-		},
-		{
-			name: "some mds are down",
-			in: models.ClusterStatus{
-				MDSsDownAmount: 3,
-			},
-			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeMDSsDown,
-				CurrentValue:       "3",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-			},
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			r := require.New(t)
-
-			i, err := MDSsDown(context.Background(), tc.in)
-			r.NoError(err)
-			r.Equal(tc.expOut, i)
-		})
-	}
-}
-
 func TestMutesAmount(t *testing.T) {
 	tcs := []testCase{
 		{
 			name: "no mutes",
-			in: models.ClusterStatus{
+			in: models.ClusterReport{
 				MutedChecks: []models.ClusterStatusMutedCheck{},
 			},
 			expOut: models.ClusterHealthIndicator{
@@ -275,7 +166,7 @@ func TestMutesAmount(t *testing.T) {
 		},
 		{
 			name: "mute present",
-			in: models.ClusterStatus{
+			in: models.ClusterReport{
 				MutedChecks: []models.ClusterStatusMutedCheck{
 					{
 						Code:    "SOME_CHECK",
@@ -306,8 +197,11 @@ func TestUncleanPGs(t *testing.T) {
 	tcs := []testCase{
 		{
 			name: "no unclean pgs",
-			in: models.ClusterStatus{
-				UncleanPGs: 0,
+			in: models.ClusterReport{
+				NumPGs: 10,
+				NumPGsByState: map[string]uint32{
+					"clean": 10,
+				},
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
@@ -317,8 +211,13 @@ func TestUncleanPGs(t *testing.T) {
 		},
 		{
 			name: "some unclean pgs",
-			in: models.ClusterStatus{
-				UncleanPGs: 3,
+			in: models.ClusterReport{
+				NumPGs: 10,
+				NumPGsByState: map[string]uint32{
+					"active":   10,
+					"clean":    7,
+					"degraded": 3,
+				},
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
@@ -343,8 +242,11 @@ func TestInactivePGs(t *testing.T) {
 	tcs := []testCase{
 		{
 			name: "no inactive pgs",
-			in: models.ClusterStatus{
-				InactivePGs: 0,
+			in: models.ClusterReport{
+				NumPGs: 10,
+				NumPGsByState: map[string]uint32{
+					"active": 10,
+				},
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
@@ -354,8 +256,14 @@ func TestInactivePGs(t *testing.T) {
 		},
 		{
 			name: "some inactive pgs",
-			in: models.ClusterStatus{
-				InactivePGs: 3,
+			in: models.ClusterReport{
+				NumPGs: 10,
+				NumPGsByState: map[string]uint32{
+					"active":   7,
+					"clean":    7,
+					"degraded": 3,
+					"inactive": 3,
+				},
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
