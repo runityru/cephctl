@@ -80,7 +80,7 @@ func TestStatusMapper(t *testing.T) {
 	}, out)
 }
 
-func TestNewClusterStatusHealthFromString(t *testing.T) {
+func TestNewClusterStatusHealth(t *testing.T) {
 	type testCase struct {
 		in             string
 		expOut         models.ClusterStatusHealth
@@ -113,7 +113,7 @@ func TestNewClusterStatusHealthFromString(t *testing.T) {
 		t.Run(tc.in, func(t *testing.T) {
 			r := require.New(t)
 
-			ch, err := NewClusterStatusHealthFromString(tc.in)
+			ch, err := NewClusterStatusHealth(tc.in)
 			if tc.expErrorString != nil {
 				r.Error(err)
 				r.Equal(*tc.expErrorString, err.Error())

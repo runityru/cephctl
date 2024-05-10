@@ -112,7 +112,7 @@ type Status struct {
 }
 
 func (st *Status) ToSvc() (models.ClusterStatus, error) {
-	csh, err := NewClusterStatusHealthFromString(st.Health.Status)
+	csh, err := NewClusterStatusHealth(st.Health.Status)
 	if err != nil {
 		return models.ClusterStatus{}, err
 	}
@@ -166,7 +166,7 @@ func (st *Status) ToSvc() (models.ClusterStatus, error) {
 	}, nil
 }
 
-func NewClusterStatusHealthFromString(in string) (models.ClusterStatusHealth, error) {
+func NewClusterStatusHealth(in string) (models.ClusterStatusHealth, error) {
 	switch in {
 	case "HEALTH_OK":
 		return models.ClusterStatusHealthOK, nil

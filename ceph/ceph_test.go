@@ -22,6 +22,43 @@ func TestApplyCephConfigOption(t *testing.T) {
 	r.NoError(err)
 }
 
+func TestClusterReport(t *testing.T) {
+	r := require.New(t)
+
+	c := New("testdata/ceph_mock_ClusterReport")
+	rep, err := c.ClusterReport(context.Background())
+	r.NoError(err)
+	r.Equal(models.ClusterReport{
+		HealthStatus:    models.ClusterStatusHealthOK,
+		Checks:          []models.ClusterStatusCheck{},
+		MutedChecks:     []models.ClusterStatusMutedCheck{},
+		NumMons:         5,
+		NumMonsInQuorum: 5,
+		NumOSDs:         15,
+		NumOSDsIn:       15,
+		NumOSDsUp:       15,
+		NumOSDsByRelease: map[string]uint16{
+			"reef": 15,
+		},
+		NumOSDsByVersion: map[string]uint16{
+			"18.2.2": 15,
+		},
+		NumOSDsByDeviceType: map[string]uint16{
+			"ssd": 15,
+		},
+		TotalOSDCapacityKB: uint64(22_321_704_960),
+		TotalOSDUsedDataKB: uint64(10_888_918_388),
+		TotalOSDUsedMetaKB: uint64(450_830_044),
+		TotalOSDUsedOMAPKB: uint64(5_881_251),
+		NumPools:           14,
+		NumPGs:             234,
+		NumPGsByState: map[string]uint32{
+			"active": 234,
+			"clean":  234,
+		},
+	}, rep)
+}
+
 func TestClusterStatus(t *testing.T) {
 	r := require.New(t)
 

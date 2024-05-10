@@ -1,0 +1,39 @@
+{
+    "daemons": {
+        "summary": "",
+        "84305071": {
+            "start_epoch": 163222,
+            "start_stamp": "2024-04-27T06:04:24.624576+0000",
+            "gid": 84305071,
+            "addr": "192.168.1.81:0/692915515",
+            "metadata": {
+                "arch": "x86_64",
+                "ceph_release": "reef",
+                "ceph_version": "ceph version 18.2.2 (531c0d11a1c5d39fbfe6aa8a521f023abf3bf3e2) reef (stable)",
+                "ceph_version_short": "18.2.2",
+                "cpu": "12th Gen Intel(R) Core(TM) i5-1240P",
+                "distro": "centos",
+                "distro_description": "CentOS Stream 8",
+                "distro_version": "8",
+                "frontend_config#0": "beast port=7480",
+                "frontend_type#0": "beast",
+                "hostname": "radosgw-bmrq7",
+                "id": "radosgw.rgw01",
+                "kernel_description": "#1 SMP PREEMPT_DYNAMIC Thu Apr 4 22:31:43 UTC 2024",
+                "kernel_version": "5.14.0-362.24.1.el9_3.0.1.x86_64",
+                "mem_swap_kb": "0",
+                "mem_total_kb": "16114028",
+                "num_handles": "1",
+                "os": "Linux",
+                "pid": "1",
+                "realm_id": "",
+                "realm_name": "",
+                "zone_id": "b35fb671-d4e5-4132-b9f9-c411add2f9e7",
+                "zone_name": "default",
+                "zonegroup_id": "2c7837d2-74c6-4166-a703-f101281119cc",
+                "zonegroup_name": "default"
+            },
+            "task_status": {}
+        }
+    }
+}
