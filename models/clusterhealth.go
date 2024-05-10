@@ -56,6 +56,12 @@ const (
 	// AtRisk: >0
 	// Dangerous: n/a
 	ClusterHealthIndicatorTypeInactivePGs ClusterHealthIndicatorType = "INACTIVE_PGS"
+
+	// ClusterHealthIndicatorTypeAllowCrimson reflects allow_crimson flag state
+	// Good: false
+	// AtRisk: true
+	// Dangerous: n/a
+	ClusterHealthIndicatorTypeAllowCrimson ClusterHealthIndicatorType = "ALLOW_CRIMSON"
 )
 
 type ClusterHealthIndicatorStatus string

@@ -20,6 +20,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.MutesAmount,
 	clusterHealth.UncleanPGs,
 	clusterHealth.InactivePGs,
+	clusterHealth.AllowCrimson,
 }
 
 type Service interface {

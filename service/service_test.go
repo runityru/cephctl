@@ -103,6 +103,11 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValue:       "0",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeAllowCrimson,
+			CurrentValue:       "false",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
 	}, chi)
 }
 
