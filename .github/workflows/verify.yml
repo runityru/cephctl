@@ -1,6 +1,8 @@
-name: Go
+---
+name: verify
 
-on: [push]
+on:
+  - push
 
 jobs:
   build:
