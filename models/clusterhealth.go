@@ -38,8 +38,8 @@ const (
 	// Ref: https://docs.ceph.com/en/latest/rados/operations/monitoring-osd-pg/#monitoring-pg-states
 	//
 	// Good: 0
-	// AtRisk: >0
-	// Dangerous: n/a
+	// AtRisk: n/a
+	// Dangerous: >0
 	ClusterHealthIndicatorTypeInactivePGs ClusterHealthIndicatorType = "INACTIVE_PGS"
 
 	// ClusterHealthIndicatorTypeMonsDown reflects amount of monitor nodes which are down
