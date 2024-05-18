@@ -12,6 +12,7 @@ import (
 	diffCmd "github.com/teran/cephctl/commands/diff"
 	dumpCephConfigCmd "github.com/teran/cephctl/commands/dump/cephconfig"
 	healthcheckCmd "github.com/teran/cephctl/commands/healthcheck"
+	"github.com/teran/cephctl/differ"
 	"github.com/teran/cephctl/service"
 )
 
@@ -66,7 +67,7 @@ func main() {
 		log.Debug("Debug mode is enabled. Beware of verbosity!")
 	}
 
-	svc := service.New(ceph.New(*cephBinary))
+	svc := service.New(ceph.New(*cephBinary), differ.New())
 
 	switch appCmd {
 	case apply.FullCommand():
