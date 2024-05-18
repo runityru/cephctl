@@ -5,34 +5,66 @@ import (
 	"testing"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
-	"github.com/teran/cephctl/ceph"
-	"github.com/teran/cephctl/models"
 	ptr "github.com/teran/go-ptr"
+
+	"github.com/teran/cephctl/ceph"
+	"github.com/teran/cephctl/differ"
+	"github.com/teran/cephctl/models"
 )
 
+func init() {
+	log.SetLevel(log.TraceLevel)
+}
+
 func (s *serviceTestSuite) TestApplyCephConfig() {
-	s.cephMock.On("DumpConfig").Return(models.CephConfig{
+	currentConfig := models.CephConfig{
 		"osd": {
 			"test_key": "value",
 		},
 		"osd.3": {
 			"test_key": "old_value",
 		},
-	}, nil).Once()
-
-	s.cephMock.On("RemoveCephConfigOption", "osd", "test_key").Return(nil).Once()
-	s.cephMock.On("ApplyCephConfigOption", "mon", "test_key", "value").Return(nil).Once()
-	s.cephMock.On("ApplyCephConfigOption", "osd.3", "test_key", "value").Return(nil).Once()
-
-	err := s.svc.ApplyCephConfig(s.ctx, models.CephConfig{
+	}
+	newConfig := models.CephConfig{
 		"mon": {
 			"test_key": "value",
 		},
 		"osd.3": {
 			"test_key": "value",
 		},
-	})
+	}
+	result := []models.CephConfigDifference{
+		{
+			Kind:    models.CephConfigDifferenceKindAdd,
+			Section: "mon",
+			Key:     "test_key",
+			Value:   ptr.String("value"),
+		},
+		{
+			Kind:     models.CephConfigDifferenceKindChange,
+			Section:  "osd.3",
+			Key:      "test_key",
+			OldValue: ptr.String("old_value"),
+			Value:    ptr.String("value"),
+		},
+		{
+			Kind:    models.CephConfigDifferenceKindRemove,
+			Section: "osd",
+			Key:     "test_key",
+		},
+	}
+
+	cephDumpConfig := s.cephMock.On("DumpConfig").Return(currentConfig, nil).Once()
+
+	s.differMock.On("DiffCephConfig", currentConfig, newConfig).Return(result, nil).Once()
+
+	s.cephMock.On("RemoveCephConfigOption", "osd", "test_key").Return(nil).NotBefore(cephDumpConfig).Once()
+	s.cephMock.On("ApplyCephConfigOption", "mon", "test_key", "value").Return(nil).NotBefore(cephDumpConfig).Once()
+	s.cephMock.On("ApplyCephConfigOption", "osd.3", "test_key", "value").Return(nil).NotBefore(cephDumpConfig).Once()
+
+	err := s.svc.ApplyCephConfig(s.ctx, newConfig)
 	s.Require().NoError(err)
 }
 
@@ -122,25 +154,23 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 }
 
 func (s *serviceTestSuite) TestDiffCephConfig() {
-	s.cephMock.On("DumpConfig").Return(models.CephConfig{
+	currentConfig := models.CephConfig{
 		"osd": {
 			"test_key": "value",
 		},
 		"osd.3": {
 			"test_key": "old_value",
 		},
-	}, nil).Once()
-
-	diff, err := s.svc.DiffCephConfig(s.ctx, models.CephConfig{
+	}
+	newConfig := models.CephConfig{
 		"mon": {
 			"test_key": "value",
 		},
 		"osd.3": {
 			"test_key": "value",
 		},
-	})
-	s.Require().NoError(err)
-	s.Require().ElementsMatch([]models.CephConfigDifference{
+	}
+	result := []models.CephConfigDifference{
 		{
 			Kind:    models.CephConfigDifferenceKindAdd,
 			Section: "mon",
@@ -159,7 +189,16 @@ func (s *serviceTestSuite) TestDiffCephConfig() {
 			Section: "osd",
 			Key:     "test_key",
 		},
-	}, diff)
+	}
+
+	cephDumpConfig := s.cephMock.
+		On("DumpConfig").Return(currentConfig, nil).Once()
+	s.differMock.
+		On("DiffCephConfig", currentConfig, newConfig).Return(result, nil).NotBefore(cephDumpConfig).Once()
+
+	diff, err := s.svc.DiffCephConfig(s.ctx, newConfig)
+	s.Require().NoError(err)
+	s.Require().ElementsMatch(result, diff)
 }
 
 func (s *serviceTestSuite) TestDumpConfig() {
@@ -183,21 +222,24 @@ func (s *serviceTestSuite) TestDumpConfig() {
 type serviceTestSuite struct {
 	suite.Suite
 
-	ctx      context.Context
-	cancel   context.CancelFunc
-	cephMock *ceph.Mock
-	svc      Service
+	ctx        context.Context
+	cancel     context.CancelFunc
+	cephMock   *ceph.Mock
+	differMock *differ.Mock
+	svc        Service
 }
 
 func (s *serviceTestSuite) SetupTest() {
 	s.ctx, s.cancel = context.WithTimeout(context.Background(), 3*time.Second)
 
 	s.cephMock = ceph.NewMock()
-	s.svc = New(s.cephMock)
+	s.differMock = differ.NewMock()
+	s.svc = New(s.cephMock, s.differMock)
 }
 
 func (s *serviceTestSuite) TearDownTest() {
 	s.cephMock.AssertExpectations(s.T())
+	s.differMock.AssertExpectations(s.T())
 
 	s.svc = nil
 	s.cephMock = nil
