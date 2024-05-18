@@ -102,6 +102,8 @@ Since cephctl uses ceph binary to achieve cluster data container image based
 on ceph official release image is also available. This image is designed as
 drop-in replacement for official ceph image to use for `cephadm shell` command.
 
+Container image is available at [GitHub Packages](https://github.com/teran/cephctl/pkgs/container/cephctl%2Fceph)
+
 ### Build from source
 
 It's possible to build cephctl from source by simply running the follwoing
