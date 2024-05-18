@@ -64,7 +64,7 @@ to adjust `ceph` binary path to access ceph in container and/or remote machine.
 * [X] Dump cluster configuration to CephConfig specification
 * [X] Diff configuration against running configuration for `ceph config`
 * [X] Perform healthcheck based on current cluster status
-* [ ] Add healthchecks based on current cluster configuration
+* [X] Add healthchecks based on current cluster configuration
 * [ ] Apply/Dump declarative configuration for `ceph osd set-*` stuff
 * [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
 
