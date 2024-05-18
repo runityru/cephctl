@@ -1,6 +1,6 @@
 # cephctl
 
-[![Go](https://github.com/teran/cephctl/actions/workflows/go.yml/badge.svg)](https://github.com/teran/cephctl/actions/workflows/go.yml)
+[![Verify](https://github.com/teran/cephctl/actions/workflows/verify.yml/badge.svg?branch=master)](https://github.com/teran/cephctl/actions/workflows/verify.yml)
 
 Small utility to control Ceph cluster configuration just like any other declarative
     configuration
