@@ -700,7 +700,7 @@ type ReportOSDSumPerfStat struct {
 type ReportOSDSumClass struct {
 	UpFrom             int                        `json:"up_from"`
 	Seq                int                        `json:"seq"`
-	NumPGs             int                        `json:"num_pgs"`
+	NumPGs             uint32                     `json:"num_pgs"`
 	NumOSDs            uint16                     `json:"num_osds"`
 	NumPerPoolOSDs     uint16                     `json:"num_per_pool_osds"`
 	NumPerPoolOMAPOSDs uint16                     `json:"num_per_pool_omap_osds"`
@@ -754,8 +754,8 @@ type ReportOSDSum struct {
 }
 
 type ReportPoolStats struct {
-	Poolid  int `json:"poolid"`
-	NumPg   int `json:"num_pg"`
+	Poolid  int    `json:"poolid"`
+	NumPG   uint32 `json:"num_pg"`
 	StatSum struct {
 		NumBytes                   int64 `json:"num_bytes"`
 		NumObjects                 int   `json:"num_objects"`
@@ -965,10 +965,10 @@ type Report struct {
 	MDSmapFirstCommitted  int                          `json:"mdsmap_first_committed"`
 	MDSmapLastCommitted   int                          `json:"mdsmap_last_committed"`
 	Auth                  ReportAuth                   `json:"auth"`
-	NumPG                 int                          `json:"num_pg"`
-	NumPGActive           int                          `json:"num_pg_active"`
-	NumPGUnknown          int                          `json:"num_pg_unknown"`
-	NumOSD                int                          `json:"num_osd"`
+	NumPG                 uint32                       `json:"num_pg"`
+	NumPGActive           uint32                       `json:"num_pg_active"`
+	NumPGUnknown          uint32                       `json:"num_pg_unknown"`
+	NumOSD                uint16                       `json:"num_osd"`
 	PoolSum               ReportPoolSum                `json:"pool_sum"`
 	OSDSum                ReportOSDSum                 `json:"osd_sum"`
 	OSDSumByClass         map[string]ReportOSDSumClass `json:"osd_sum_by_class"`
@@ -1031,7 +1031,7 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		NumMonsInQuorum:              uint8(numMonsInQuorum),
 		AllowCrimson:                 r.OSDMap.AllowCrimson,
 		StretchMode:                  r.MonMap.StretchMode,
-		NumOSDs:                      r.OSDSum.NumOSDs,
+		NumOSDs:                      r.NumOSD,
 		NumOSDsWithoutClusterAddress: osdsWithoutClusterAddress,
 		NumOSDsIn:                    osdsIn,
 		NumOSDsUp:                    osdsUp,
