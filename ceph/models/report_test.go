@@ -56,49 +56,115 @@ func TestReportServiceMapServicesRgwDaemonGenericMapUnmarshalJSON(t *testing.T) 
 }
 
 func TestReportToSvc(t *testing.T) {
-	r := require.New(t)
+	type testCase struct {
+		name   string
+		in     string
+		expOut models.ClusterReport
+	}
 
-	data, err := os.ReadFile("testdata/Report.json")
-	r.NoError(err)
+	tcs := []testCase{
+		{
+			name: "clean cluster",
+			in:   "testdata/report_samples/CleanReport.json",
+			expOut: models.ClusterReport{
+				HealthStatus:    models.ClusterStatusHealthOK,
+				Checks:          []models.ClusterStatusCheck{},
+				MutedChecks:     []models.ClusterStatusMutedCheck{},
+				NumMons:         5,
+				NumMonsInQuorum: 5,
+				NumOSDs:         15,
+				NumOSDsIn:       15,
+				NumOSDsUp:       15,
+				NumOSDsByRelease: map[string]uint16{
+					"reef": 15,
+				},
+				NumOSDsByVersion: map[string]uint16{
+					"18.2.2": 15,
+				},
+				NumOSDsByDeviceType: map[string]uint16{
+					"ssd": 15,
+				},
+				TotalOSDCapacityKB: uint64(22_321_704_960),
+				TotalOSDUsedDataKB: uint64(10_986_978_208),
+				TotalOSDUsedMetaKB: uint64(512_967_627),
+				TotalOSDUsedOMAPKB: uint64(5_822_580),
+				NumPools:           14,
+				NumPGs:             330,
+				NumPGsByState: map[string]uint32{
+					"active":        330,
+					"backfill_wait": 50,
+					"backfilling":   2,
+					"clean":         278,
+					"remapped":      52,
+				},
+			},
+		},
+		{
+			name: "cluster with OSDs in out state",
+			in:   "testdata/report_samples/ReportWithOutOSDs.json",
+			expOut: models.ClusterReport{
+				HealthStatus: models.ClusterStatusHealthWARN,
+				Checks: []models.ClusterStatusCheck{
+					{
+						Code:     "OSDMAP_FLAGS",
+						Severity: "HEALTH_WARN",
+						Summary:  "nodown,noout flag(s) set",
+					},
+					{
+						Code:     "PG_BACKFILL_FULL",
+						Severity: "HEALTH_WARN",
+						Summary:  "Low space hindering backfill (add storage if this doesn't resolve itself): 14 pgs backfill_toofull",
+					},
+				},
+				MutedChecks:     []models.ClusterStatusMutedCheck{},
+				NumMons:         5,
+				NumMonsInQuorum: 5,
+				NumOSDs:         15,
+				NumOSDsIn:       13,
+				NumOSDsUp:       15,
+				NumOSDsByRelease: map[string]uint16{
+					"reef": 15,
+				},
+				NumOSDsByVersion: map[string]uint16{
+					"18.2.2": 15,
+				},
+				NumOSDsByDeviceType: map[string]uint16{
+					"ssd": 15,
+				},
+				TotalOSDCapacityKB: uint64(18_729_263_104),
+				TotalOSDUsedDataKB: uint64(10_393_147_824),
+				TotalOSDUsedMetaKB: uint64(489_119_531),
+				TotalOSDUsedOMAPKB: uint64(1_478_996),
+				NumPools:           14,
+				NumPGs:             330,
+				NumPGsByState: map[string]uint32{
+					"active":           330,
+					"backfill_toofull": 14,
+					"backfill_wait":    78,
+					"backfilling":      2,
+					"clean":            250,
+					"remapped":         153,
+				},
+			},
+		},
+	}
 
-	rep := &Report{}
-	err = json.Unmarshal(data, rep)
-	r.NoError(err)
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
 
-	out, err := rep.ToSvc()
-	r.NoError(err)
-	r.Equal(models.ClusterReport{
-		HealthStatus:    models.ClusterStatusHealthOK,
-		Checks:          []models.ClusterStatusCheck{},
-		MutedChecks:     []models.ClusterStatusMutedCheck{},
-		NumMons:         5,
-		NumMonsInQuorum: 5,
-		NumOSDs:         15,
-		NumOSDsIn:       15,
-		NumOSDsUp:       15,
-		NumOSDsByRelease: map[string]uint16{
-			"reef": 15,
-		},
-		NumOSDsByVersion: map[string]uint16{
-			"18.2.2": 15,
-		},
-		NumOSDsByDeviceType: map[string]uint16{
-			"ssd": 15,
-		},
-		TotalOSDCapacityKB: uint64(22_321_704_960),
-		TotalOSDUsedDataKB: uint64(10_986_978_208),
-		TotalOSDUsedMetaKB: uint64(512_967_627),
-		TotalOSDUsedOMAPKB: uint64(5_822_580),
-		NumPools:           14,
-		NumPGs:             330,
-		NumPGsByState: map[string]uint32{
-			"active":        330,
-			"backfill_wait": 50,
-			"backfilling":   2,
-			"clean":         278,
-			"remapped":      52,
-		},
-	}, out)
+			data, err := os.ReadFile(tc.in)
+			r.NoError(err)
+
+			rep := &Report{}
+			err = json.Unmarshal(data, rep)
+			r.NoError(err)
+
+			out, err := rep.ToSvc()
+			r.NoError(err)
+			r.Equal(tc.expOut, out)
+		})
+	}
 }
 
 func TestCountOSDs(t *testing.T) {
