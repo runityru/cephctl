@@ -84,3 +84,29 @@ but please note a few things:
     since they're written and serve for internal purposes.
 3. CLI interface (until 1.0.x at least) is also not guaranteed to be stable:
     subcommands and options are subjects to change between versions.
+
+## Installation
+
+cephctl is released in following ways to achieve compatibility and provide
+an easy way for end users.
+
+### Pre-compiled binary
+
+Pre-compiled binaries are available on per-release basis and provided on
+[GitHub Releases page](https://github.com/teran/cephctl/releases). Automatically
+generated changelog is available for each release.
+
+### Container image
+
+Since cephctl uses ceph binary to achieve cluster data container image based
+on ceph official release image is also available. This image is designed as
+drop-in replacement for official ceph image to use for `cephadm shell` command.
+
+### Build from source
+
+It's possible to build cephctl from source by simply running the follwoing
+command:
+
+```shell
+go build -o dist/cephctl ./cmd/cephctl/...
+```
