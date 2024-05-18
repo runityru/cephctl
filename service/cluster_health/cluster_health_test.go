@@ -140,7 +140,7 @@ func TestInactivePGs(t *testing.T) {
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
 				CurrentValue:       "3",
-				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
 			},
 		},
 	}

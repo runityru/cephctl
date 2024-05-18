@@ -16,6 +16,7 @@ func Healthcheck(ctx context.Context, svc service.Service) error {
 
 	for _, indicator := range indicators {
 		var printFn func(string, ...interface{}) = color.HiRed
+
 		switch indicator.CurrentValueStatus {
 		case models.ClusterHealthIndicatorStatusGood:
 			printFn = color.Green
