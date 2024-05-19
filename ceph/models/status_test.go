@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/pkg/errors"
@@ -148,6 +149,41 @@ func TestNewClusterStatusCheck(t *testing.T) {
 			Summary:  "some message",
 		},
 	}, cs)
+}
+
+func TestNewClusterStatusCheckResultOrder(t *testing.T) {
+	const (
+		inChecks = 100
+		tries    = 100
+	)
+
+	r := require.New(t)
+
+	in, out := func() (map[string]StatusCheck, []models.ClusterStatusCheck) {
+		in := make(map[string]StatusCheck)
+		out := []models.ClusterStatusCheck{}
+
+		for i := 0; i < inChecks; i++ {
+			in[fmt.Sprintf("CODE_%06d", i)] = StatusCheck{
+				Severity: "HEALTH_WARN",
+				Summary: StatusCheckSummary{
+					Message: fmt.Sprintf("TEST MESSAGE #%06d", i),
+				},
+			}
+			out = append(out, models.ClusterStatusCheck{
+				Code:     fmt.Sprintf("CODE_%06d", i),
+				Severity: models.ClusterStatusHealthWARN,
+				Summary:  fmt.Sprintf("TEST MESSAGE #%06d", i),
+			})
+		}
+		return in, out
+	}()
+
+	for i := 0; i < tries; i++ {
+		res, err := NewClusterStatusCheck(in)
+		r.NoError(err)
+		r.Equal(out, res)
+	}
 }
 
 func TestNewClusterMutedChecks(t *testing.T) {
