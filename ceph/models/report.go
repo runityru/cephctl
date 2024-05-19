@@ -195,8 +195,8 @@ type ReportOSDMapOSDHeartbeatFrontAddrs struct {
 type ReportOSDMapOSD struct {
 	Osd                 int                                `json:"osd"`
 	UUID                string                             `json:"uuid"`
-	Up                  int                                `json:"up"`
-	In                  int                                `json:"in"`
+	Up                  uint8                              `json:"up"`
+	In                  uint8                              `json:"in"`
 	Weight              float64                            `json:"weight"`
 	PrimaryAffinity     int                                `json:"primary_affinity"`
 	LastCleanBegin      int                                `json:"last_clean_begin"`
@@ -1016,7 +1016,7 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		return models.ClusterReport{}, errors.Wrapf(ErrOverflow, "too many pools found: %d", numPools)
 	}
 
-	osdsUp, osdsIn, osdsWithoutClusterAddress := countOSDs(r.OSDMap.OSDs)
+	total, osdsUp, osdsIn, osdsWithoutClusterAddress := countOSDs(r.OSDMap.OSDs)
 
 	numPGs, numPGsByState, err := countPGs(r.NumPGByState)
 	if err != nil {
@@ -1031,7 +1031,7 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		NumMonsInQuorum:              uint8(numMonsInQuorum),
 		AllowCrimson:                 r.OSDMap.AllowCrimson,
 		StretchMode:                  r.MonMap.StretchMode,
-		NumOSDs:                      r.NumOSD,
+		NumOSDs:                      total,
 		NumOSDsWithoutClusterAddress: osdsWithoutClusterAddress,
 		NumOSDsIn:                    osdsIn,
 		NumOSDsUp:                    osdsUp,
@@ -1048,8 +1048,10 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 	}, nil
 }
 
-func countOSDs(osds []ReportOSDMapOSD) (up uint16, in uint16, withoutClusterAddress uint16) {
+func countOSDs(osds []ReportOSDMapOSD) (total, up, in, withoutClusterAddress uint16) {
 	for _, osd := range osds {
+		total++
+
 		if osd.In == 1 {
 			in++
 		}
