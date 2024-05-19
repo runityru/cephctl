@@ -2,7 +2,13 @@
 name: verify
 
 on:
-  - push
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - reopened
 
 jobs:
   hadolint:
