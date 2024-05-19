@@ -131,10 +131,10 @@ func TestReportToSvc(t *testing.T) {
 				NumOSDsByDeviceType: map[string]uint16{
 					"ssd": 15,
 				},
-				TotalOSDCapacityKB: uint64(18_729_263_104),
-				TotalOSDUsedDataKB: uint64(10_393_147_824),
-				TotalOSDUsedMetaKB: uint64(489_119_531),
-				TotalOSDUsedOMAPKB: uint64(1_478_996),
+				TotalOSDCapacityKB: 18_729_263_104,
+				TotalOSDUsedDataKB: 10_393_147_824,
+				TotalOSDUsedMetaKB: 489_119_531,
+				TotalOSDUsedOMAPKB: 1_478_996,
 				NumPools:           14,
 				NumPGs:             330,
 				NumPGsByState: map[string]uint32{
@@ -144,6 +144,84 @@ func TestReportToSvc(t *testing.T) {
 					"backfilling":      2,
 					"clean":            250,
 					"remapped":         153,
+				},
+			},
+		},
+		{
+			name: "cluster with OSDs in down state",
+			in:   "testdata/report_samples/ReportWithDownOSDs.json",
+			expOut: models.ClusterReport{
+				HealthStatus: models.ClusterStatusHealthWARN,
+				Checks: []models.ClusterStatusCheck{
+					{
+						Code:     "FS_DEGRADED",
+						Severity: "HEALTH_WARN",
+						Summary:  "1 filesystem is degraded",
+					},
+					{
+						Code:     "MDS_SLOW_METADATA_IO",
+						Severity: "HEALTH_WARN",
+						Summary:  "1 MDSs report slow metadata IOs",
+					},
+					{
+						Code:     "OSD_DOWN",
+						Severity: "HEALTH_WARN",
+						Summary:  "6 osds down",
+					},
+					{
+						Code:     "OSD_HOST_DOWN",
+						Severity: "HEALTH_WARN",
+						Summary:  "2 hosts (6 osds) down",
+					},
+					{
+						Code:     "OSD_SLOW_PING_TIME_BACK",
+						Severity: "HEALTH_WARN",
+						Summary:  "Slow OSD heartbeats on back (longest 83761.606ms)",
+					},
+					{
+						Code:     "OSD_SLOW_PING_TIME_FRONT",
+						Severity: "HEALTH_WARN",
+						Summary:  "Slow OSD heartbeats on front (longest 84721.090ms)",
+					},
+					{
+						Code:     "PG_AVAILABILITY",
+						Severity: "HEALTH_WARN",
+						Summary:  "Reduced data availability: 212 pgs inactive, 192 pgs down",
+					},
+					{
+						Code:     "PG_DEGRADED",
+						Severity: "HEALTH_WARN",
+						Summary:  "Degraded data redundancy: 13932/28946801 objects degraded (0.048%), 105 pgs degraded, 111 pgs undersized",
+					},
+				},
+				MutedChecks:     []models.ClusterStatusMutedCheck{},
+				NumMons:         5,
+				NumMonsInQuorum: 5,
+				NumOSDs:         14,
+				NumOSDsIn:       14,
+				NumOSDsUp:       8,
+				NumOSDsByRelease: map[string]uint16{
+					"reef": 14,
+				},
+				NumOSDsByVersion: map[string]uint16{
+					"18.2.2": 14,
+				},
+				NumOSDsByDeviceType: map[string]uint16{
+					"ssd": 14,
+				},
+				TotalOSDCapacityKB: 16_985_456_640,
+				TotalOSDUsedDataKB: 7_161_124_160,
+				TotalOSDUsedMetaKB: 2_194_240_219,
+				TotalOSDUsedOMAPKB: 1_172_260,
+				NumPools:           14,
+				NumPGs:             330,
+				NumPGsByState: map[string]uint32{
+					"active":     118,
+					"clean":      27,
+					"degraded":   105,
+					"down":       192,
+					"peered":     20,
+					"undersized": 111,
 				},
 			},
 		},
@@ -170,7 +248,7 @@ func TestReportToSvc(t *testing.T) {
 func TestCountOSDs(t *testing.T) {
 	r := require.New(t)
 
-	up, in, withoutClusterAddress := countOSDs([]ReportOSDMapOSD{
+	total, up, in, withoutClusterAddress := countOSDs([]ReportOSDMapOSD{
 		{In: 1},
 		{In: 1},
 		{Up: 1},
@@ -180,6 +258,7 @@ func TestCountOSDs(t *testing.T) {
 			},
 		}},
 	})
+	r.Equal(uint16(4), total)
 	r.Equal(uint16(2), up)
 	r.Equal(uint16(3), in)
 	r.Equal(uint16(3), withoutClusterAddress)
