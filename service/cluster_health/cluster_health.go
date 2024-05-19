@@ -104,9 +104,9 @@ func OSDsMetadataSize(ctx context.Context, cr models.ClusterReport) (models.Clus
 
 	metadataSizePercentage := 100.0 / float64(cr.TotalOSDCapacityKB) * float64(cr.TotalOSDUsedMetaKB)
 
-	if metadataSizePercentage > 10.0 {
+	if metadataSizePercentage > 20.0 {
 		st = models.ClusterHealthIndicatorStatusDangerous
-	} else if metadataSizePercentage > 7.0 {
+	} else if metadataSizePercentage > 15.0 {
 		st = models.ClusterHealthIndicatorStatusAtRisk
 	} else if metadataSizePercentage > 0 {
 		st = models.ClusterHealthIndicatorStatusGood
