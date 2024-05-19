@@ -1,6 +1,8 @@
 package models
 
 import (
+	"cmp"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -195,6 +197,11 @@ func NewClusterStatusCheck(in map[string]StatusCheck) ([]models.ClusterStatusChe
 			Code:     code,
 			Severity: severity,
 			Summary:  c.Summary.Message,
+		})
+	}
+	if len(checks) > 1 {
+		slices.SortStableFunc(checks, func(i, j models.ClusterStatusCheck) int {
+			return cmp.Compare(i.Code, j.Code)
 		})
 	}
 
