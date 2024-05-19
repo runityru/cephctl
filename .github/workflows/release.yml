@@ -22,6 +22,9 @@ jobs:
         id: timestamp
         run: echo "::set-output name=now::$(date -u +'%Y%m%d%H%M%S')"
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       - uses: hadolint/hadolint-action@v3.1.0
         with:
           dockerfile: Dockerfile
