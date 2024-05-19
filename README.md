@@ -107,9 +107,11 @@ Container image is available at [GitHub Packages](https://github.com/teran/cephc
 
 ### Build from source
 
-It's possible to build cephctl from source by simply running the follwoing
+It's possible to build cephctl from source by simply running the following
 command:
 
+<!-- markdownlint-disable MD013 -->
 ```shell
-go build -o dist/cephctl ./cmd/cephctl/...
+go build -v -ldflags="-X 'main.appVersion=$(git rev-parse --short HEAD) (trunk build)' -X 'main.buildTimestamp=$(date -u +%Y-%m-%dT%H:%m:%SZ)'" -o dist/cephctl ./cmd/cephctl/...
 ```
+<!-- markdownlint-enable MD013 -->
