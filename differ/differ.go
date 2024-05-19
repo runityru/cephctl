@@ -37,7 +37,15 @@ func (d *differ) DiffCephConfig(ctx context.Context, from, to models.CephConfig)
 
 	changes := []models.CephConfigDifference{}
 	for _, change := range changelog {
+		if len(change.Path) != 1 {
+			return nil, errors.Errorf("unexpected path structure in diff (got %d parts): mostly possible programmer error", len(change.Path))
+		}
+
 		pathParts := strings.SplitN(change.Path[0], flattenMapSeparator, 2)
+		if len(pathParts) != 2 {
+			return nil, errors.Errorf("unexpected path received: no flattened parts found (%d received)", len(pathParts))
+		}
+
 		section := pathParts[0]
 		key := pathParts[1]
 
