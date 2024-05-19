@@ -84,8 +84,8 @@ const (
 	// Ref: https://docs.ceph.com/en/latest/rados/configuration/bluestore-config-ref/#sizing
 	//
 	// Good: 0-7
-	// AtRisk: >7
-	// Dangerous: >10
+	// AtRisk: >15
+	// Dangerous: >20
 	ClusterHealthIndicatorTypeOSDsMetadataSize ClusterHealthIndicatorType = "OSD_METADATA_SIZE"
 
 	// ClusterHealthIndicatorTypeOSDVersionMismatch indicates different versions

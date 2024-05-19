@@ -242,36 +242,36 @@ func TestOSDsMetadataSize(t *testing.T) {
 		{
 			name: "metadata size is <7%",
 			in: models.ClusterReport{
-				TotalOSDCapacityKB: 10240,
+				TotalOSDCapacityKB: 10000,
 				TotalOSDUsedMetaKB: 100,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "0.98",
+				CurrentValue:       "1.00",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
 		{
 			name: "metadata size is >7%",
 			in: models.ClusterReport{
-				TotalOSDCapacityKB: 10240,
-				TotalOSDUsedMetaKB: 725,
+				TotalOSDCapacityKB: 10000,
+				TotalOSDUsedMetaKB: 1782,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "7.08",
+				CurrentValue:       "17.82",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
 		},
 		{
 			name: "metadata size is >10%",
 			in: models.ClusterReport{
-				TotalOSDCapacityKB: 10240,
-				TotalOSDUsedMetaKB: 1030,
+				TotalOSDCapacityKB: 10000,
+				TotalOSDUsedMetaKB: 2006,
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "10.06",
+				CurrentValue:       "20.06",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
 			},
 		},
