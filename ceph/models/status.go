@@ -199,11 +199,10 @@ func NewClusterStatusCheck(in map[string]StatusCheck) ([]models.ClusterStatusChe
 			Summary:  c.Summary.Message,
 		})
 	}
-	if len(checks) > 1 {
-		slices.SortStableFunc(checks, func(i, j models.ClusterStatusCheck) int {
-			return cmp.Compare(i.Code, j.Code)
-		})
-	}
+
+	slices.SortStableFunc(checks, func(i, j models.ClusterStatusCheck) int {
+		return cmp.Compare(i.Code, j.Code)
+	})
 
 	return checks, nil
 }
