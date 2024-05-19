@@ -37,9 +37,24 @@ func (d *differ) DiffCephConfig(ctx context.Context, from, to models.CephConfig)
 
 	changes := []models.CephConfigDifference{}
 	for _, change := range changelog {
+		if len(change.Path) != 1 {
+			return nil, errors.Errorf("unexpected path structure in diff (got %d parts): mostly possible programmer error", len(change.Path))
+		}
+
 		pathParts := strings.SplitN(change.Path[0], flattenMapSeparator, 2)
+		if len(pathParts) != 2 {
+			return nil, errors.Errorf("unexpected path received: no flattened parts found (%d received)", len(pathParts))
+		}
+
 		section := pathParts[0]
+		if len(section) == 0 {
+			return nil, errors.Errorf("section name cannot be empty")
+		}
+
 		key := pathParts[1]
+		if len(key) == 0 {
+			return nil, errors.Errorf("key name cannot be empty")
+		}
 
 		switch change.Type {
 		case diff.CREATE:
@@ -88,14 +103,4 @@ func (d *differ) DiffCephConfig(ctx context.Context, from, to models.CephConfig)
 	}
 
 	return changes, nil
-}
-
-func flattenMap(in map[string]map[string]string) map[string]string {
-	out := make(map[string]string)
-	for k, v := range in {
-		for j, m := range v {
-			out[k+flattenMapSeparator+j] = m
-		}
-	}
-	return out
 }
