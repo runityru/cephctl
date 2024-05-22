@@ -439,10 +439,10 @@ func TestUncleanPGs(t *testing.T) {
 		{
 			name: "some unclean pgs",
 			in: models.ClusterReport{
-				NumPGs: 10,
+				NumPGs: 13,
 				NumPGsByState: map[string]uint32{
-					"active":   10,
-					"clean":    7,
+					"clean":    10,
+					"active":   13,
 					"degraded": 3,
 				},
 			},

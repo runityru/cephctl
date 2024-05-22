@@ -336,14 +336,19 @@ func TestCountPGs(t *testing.T) {
 			State: "active+clean",
 			Num:   8,
 		},
+		{
+			State: "down",
+			Num:   10,
+		},
 	})
 	r.NoError(err)
-	r.Equal(uint32(14), total)
+	r.Equal(uint32(24), total)
 	r.Equal(map[string]uint32{
 		"active":        14,
 		"remapped":      6,
 		"backfill_wait": 2,
 		"backfilling":   4,
 		"clean":         8,
+		"down":          10,
 	}, byState)
 }
