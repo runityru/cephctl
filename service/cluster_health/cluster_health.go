@@ -2,6 +2,7 @@ package cluster_health
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/teran/cephctl/models"
@@ -64,7 +65,7 @@ func InactivePGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHe
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-		CurrentValue:       strconv.FormatUint(uint64(inactivePGs), 10),
+		CurrentValue:       fmt.Sprintf("%d of %d", inactivePGs, cr.NumPGs),
 		CurrentValueStatus: st,
 	}, nil
 }
@@ -73,14 +74,14 @@ func MutesAmount(ctx context.Context, cr models.ClusterReport) (models.ClusterHe
 	if len(cr.MutedChecks) > 0 {
 		return models.ClusterHealthIndicator{
 			Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-			CurrentValue:       strconv.FormatInt(int64(len(cr.MutedChecks)), 10),
+			CurrentValue:       fmt.Sprintf("%d of %d", len(cr.MutedChecks), len(cr.Checks)),
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		}, nil
 	}
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-		CurrentValue:       "0",
+		CurrentValue:       "0 of 0",
 		CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 	}, nil
 }
@@ -94,7 +95,7 @@ func OSDsDown(ctx context.Context, cr models.ClusterReport) (models.ClusterHealt
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-		CurrentValue:       strconv.FormatUint(uint64(numOSDsDown), 10),
+		CurrentValue:       fmt.Sprintf("%d of %d", numOSDsDown, cr.NumOSDs),
 		CurrentValueStatus: st,
 	}, nil
 }
@@ -114,7 +115,7 @@ func OSDsMetadataSize(ctx context.Context, cr models.ClusterReport) (models.Clus
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-		CurrentValue:       strconv.FormatFloat(metadataSizePercentage, 'f', 2, 64),
+		CurrentValue:       strconv.FormatFloat(metadataSizePercentage, 'f', 2, 64) + "%",
 		CurrentValueStatus: st,
 	}, nil
 }
@@ -146,7 +147,7 @@ func Quorum(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthI
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-		CurrentValue:       strconv.FormatUint(uint64(cr.NumMonsInQuorum), 10),
+		CurrentValue:       fmt.Sprintf("%d of %d", cr.NumMonsInQuorum, cr.NumMons),
 		CurrentValueStatus: st,
 	}, nil
 }
@@ -162,7 +163,7 @@ func UncleanPGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHea
 
 	return models.ClusterHealthIndicator{
 		Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-		CurrentValue:       strconv.FormatUint(uint64(uncleanPGs), 10),
+		CurrentValue:       fmt.Sprintf("%d of %d", uncleanPGs, cr.NumPGs),
 		CurrentValueStatus: st,
 	}, nil
 }

@@ -122,7 +122,7 @@ func TestInactivePGs(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-				CurrentValue:       "0",
+				CurrentValue:       "0 of 10",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
@@ -139,7 +139,7 @@ func TestInactivePGs(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-				CurrentValue:       "3",
+				CurrentValue:       "3 of 10",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
 			},
 		},
@@ -165,7 +165,7 @@ func TestMutesAmount(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-				CurrentValue:       "0",
+				CurrentValue:       "0 of 0",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
@@ -181,7 +181,7 @@ func TestMutesAmount(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-				CurrentValue:       "1",
+				CurrentValue:       "1 of 0",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
 		},
@@ -208,7 +208,7 @@ func TestOSDsDown(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-				CurrentValue:       "0",
+				CurrentValue:       "0 of 10",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
@@ -220,7 +220,7 @@ func TestOSDsDown(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-				CurrentValue:       "3",
+				CurrentValue:       "3 of 10",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
 		},
@@ -247,7 +247,7 @@ func TestOSDsMetadataSize(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "1.00",
+				CurrentValue:       "1.00%",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
@@ -259,7 +259,7 @@ func TestOSDsMetadataSize(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "17.82",
+				CurrentValue:       "17.82%",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
 		},
@@ -271,7 +271,7 @@ func TestOSDsMetadataSize(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "20.06",
+				CurrentValue:       "20.06%",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
 			},
 		},
@@ -280,7 +280,7 @@ func TestOSDsMetadataSize(t *testing.T) {
 			in:   models.ClusterReport{},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-				CurrentValue:       "NaN",
+				CurrentValue:       "NaN%",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusUnknown,
 			},
 		},
@@ -391,7 +391,7 @@ func TestQuorum(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-				CurrentValue:       "5",
+				CurrentValue:       "5 of 5",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
@@ -403,7 +403,7 @@ func TestQuorum(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-				CurrentValue:       "3",
+				CurrentValue:       "3 of 5",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
 		},
@@ -432,7 +432,7 @@ func TestUncleanPGs(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-				CurrentValue:       "0",
+				CurrentValue:       "0 of 10",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
 		},
@@ -448,7 +448,7 @@ func TestUncleanPGs(t *testing.T) {
 			},
 			expOut: models.ClusterHealthIndicator{
 				Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-				CurrentValue:       "3",
+				CurrentValue:       "3 of 13",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
 		},

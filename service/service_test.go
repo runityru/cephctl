@@ -112,27 +112,27 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-			CurrentValue:       "5",
+			CurrentValue:       "5 of 5",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-			CurrentValue:       "0",
+			CurrentValue:       "0 of 15",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-			CurrentValue:       "0",
+			CurrentValue:       "0 of 0",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-			CurrentValue:       "52",
+			CurrentValue:       "52 of 330",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-			CurrentValue:       "0",
+			CurrentValue:       "0 of 330",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
@@ -142,7 +142,7 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 		},
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-			CurrentValue:       "2.30",
+			CurrentValue:       "2.30%",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
