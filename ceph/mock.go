@@ -37,6 +37,11 @@ func (m *Mock) DumpConfig(_ context.Context) (models.CephConfig, error) {
 	return args.Get(0).(models.CephConfig), args.Error(1)
 }
 
+func (m *Mock) ListDevices(_ context.Context) ([]models.Device, error) {
+	args := m.Called()
+	return args.Get(0).([]models.Device), args.Error(1)
+}
+
 func (m *Mock) RemoveCephConfigOption(ctx context.Context, section, key string) error {
 	args := m.Called(section, key)
 	return args.Error(0)

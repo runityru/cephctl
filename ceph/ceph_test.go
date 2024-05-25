@@ -102,6 +102,30 @@ func TestDumpConfig(t *testing.T) {
 	}, cfg)
 }
 
+func TestListDevices(t *testing.T) {
+	r := require.New(t)
+	c := New("testdata/ceph_mock_ListDevices")
+	devices, err := c.ListDevices(context.Background())
+	r.NoError(err)
+	r.Equal([]models.Device{
+		{
+			ID:        "CT4000P3SSD8_XXXYYYZZZ60B",
+			Daemons:   []string{},
+			WearLevel: 0.09000000357627869,
+		},
+		{
+			ID:        "CT4000P3SSD8_XXXYYYZZZD0F",
+			Daemons:   []string{"osd.7", "osd.8"},
+			WearLevel: 0.10000000149011612,
+		},
+		{
+			ID:        "CT4000P3SSD8_XXXYYYZZZFCE",
+			Daemons:   []string{"osd.4", "osd.5"},
+			WearLevel: 0.10999999940395355,
+		},
+	}, devices)
+}
+
 func TestRemoveCephConfigOption(t *testing.T) {
 	r := require.New(t)
 

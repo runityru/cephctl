@@ -23,6 +23,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.AllowCrimson,
 	clusterHealth.OSDsMetadataSize,
 	clusterHealth.OSDsNumDaemonVersions,
+	clusterHealth.DeviceHealth,
 }
 
 type Service interface {
@@ -74,6 +75,13 @@ func (s *service) CheckClusterHealth(ctx context.Context) ([]models.ClusterHealt
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving cluster status")
 	}
+
+	devices, err := s.c.ListDevices(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "error retrieving device list")
+	}
+
+	cr.Devices = devices
 
 	indicators := []models.ClusterHealthIndicator{}
 	for _, checkFunc := range clusterHealthChecksList {

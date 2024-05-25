@@ -131,6 +131,13 @@ const (
 	// AtRisk: >0
 	// Dangerous: n/a
 	ClusterHealthIndicatorTypeUncleanPGs ClusterHealthIndicatorType = "UNCLEAN_PGS"
+
+	// ClusterHealthIndicatorTypeDeviceHealthWearout reflects devices with risky wearout levels
+	//
+	// Good: 0
+	// AtRisk: at least 1 devices w/ wear out >50%
+	// Dangerous: at least 1 device w/ wear out >75%
+	ClusterHealthIndicatorTypeDeviceHealthWearout ClusterHealthIndicatorType = "DEVICE_HEALTH_WEAROUT"
 )
 
 type ClusterHealthIndicatorStatus string

@@ -18,6 +18,7 @@ type Ceph interface {
 	ClusterReport(ctx context.Context) (models.ClusterReport, error)
 	ClusterStatus(ctx context.Context) (models.ClusterStatus, error)
 	DumpConfig(ctx context.Context) (models.CephConfig, error)
+	ListDevices(ctx context.Context) ([]models.Device, error)
 	RemoveCephConfigOption(ctx context.Context, section, key string) error
 }
 
@@ -108,6 +109,34 @@ func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
 		}
 
 		out[v.Section][v.Name] = v.Value
+	}
+
+	return out, nil
+}
+
+func (c *ceph) ListDevices(ctx context.Context) ([]models.Device, error) {
+	devices := []cephModels.Device{}
+	buf := &bytes.Buffer{}
+	bin, args := mkCommand(c.binaryPath, []string{"device", "ls", "--format=json"})
+
+	cmd := exec.CommandContext(ctx, bin, args...)
+	cmd.Stdout = buf
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return nil, errors.Wrap(err, "error listing devices")
+	}
+
+	if err := json.Unmarshal(buf.Bytes(), &devices); err != nil {
+		return nil, errors.Wrap(err, "error decoding response")
+	}
+
+	out := []models.Device{}
+	for _, v := range devices {
+		out = append(out, models.Device{
+			ID:        v.DevID,
+			Daemons:   append([]string{}, v.Daemons...),
+			WearLevel: v.WearLevel,
+		})
 	}
 
 	return out, nil
