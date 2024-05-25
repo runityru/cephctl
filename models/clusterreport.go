@@ -15,6 +15,7 @@ type ClusterReport struct {
 	NumOSDsByRelease             map[string]uint16
 	NumOSDsByVersion             map[string]uint16
 	NumOSDsByDeviceType          map[string]uint16
+	Devices                      []Device
 	TotalOSDCapacityKB           uint64
 	TotalOSDUsedDataKB           uint64
 	TotalOSDUsedMetaKB           uint64

@@ -102,6 +102,19 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 		},
 	}, nil).Once()
 
+	s.cephMock.On("ListDevices").Return([]models.Device{
+		{
+			ID:        "testdevice",
+			Daemons:   []string{"osd.0"},
+			WearLevel: 0.000001,
+		},
+		{
+			ID:        "testdevice2",
+			Daemons:   []string{"osd.0"},
+			WearLevel: 0.510001,
+		},
+	}, nil)
+
 	chi, err := s.svc.CheckClusterHealth(s.ctx)
 	s.Require().NoError(err)
 	s.Require().Equal([]models.ClusterHealthIndicator{
@@ -154,6 +167,11 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			Indicator:          models.ClusterHealthIndicatorTypeOSDsNumDaemonVersions,
 			CurrentValue:       "1",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
+			Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+			CurrentValue:       ">50.0%: 1 device(s); >75.0%: 0 device(s)",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		},
 	}, chi)
 }
