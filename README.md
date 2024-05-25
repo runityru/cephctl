@@ -97,6 +97,7 @@ Pre-compiled binaries are available on per-release basis and provided on
 [GitHub Releases page](https://github.com/teran/cephctl/releases). Automatically
 generated changelog is available for each release. And binaries are available for:
 
+* FreeBSD (amd64v1, amd64v2, amd64v3, arm64)
 * Linux (amd64v1, amd64v2, amd64v3, arm64)
 * macOS (amd64v1, amd64v2, amd64v3, arm64)
 * Windows (amd64v1, amd64v2, amd64v3, arm64)
