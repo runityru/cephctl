@@ -169,7 +169,7 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
-			Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+			Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 			CurrentValue:       ">50.0%: 1 device(s); >75.0%: 0 device(s)",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		},

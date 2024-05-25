@@ -129,7 +129,7 @@ func TestDeviceHealth(t *testing.T) {
 				},
 			},
 			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 				CurrentValue:       ">50.0%: 0 device(s); >75.0%: 0 device(s)",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 			},
@@ -156,7 +156,7 @@ func TestDeviceHealth(t *testing.T) {
 				},
 			},
 			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 				CurrentValue:       ">50.0%: 1 device(s); >75.0%: 1 device(s)",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusDangerous,
 			},
@@ -183,7 +183,7 @@ func TestDeviceHealth(t *testing.T) {
 				},
 			},
 			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 				CurrentValue:       ">50.0%: 2 device(s); >75.0%: 0 device(s)",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},
@@ -210,7 +210,7 @@ func TestDeviceHealth(t *testing.T) {
 				},
 			},
 			expOut: models.ClusterHealthIndicator{
-				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+				Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 				CurrentValue:       ">50.0%: 1 device(s); >75.0%: 0 device(s)",
 				CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 			},

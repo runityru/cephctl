@@ -84,7 +84,7 @@ func DeviceHealth(ctx context.Context, cr models.ClusterReport) (models.ClusterH
 	}
 
 	return models.ClusterHealthIndicator{
-		Indicator:          models.ClusterHealthIndicatorTypeDeviceHealth,
+		Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 		CurrentValue:       fmt.Sprintf(">%.1f%%: %d device(s); >%.1f%%: %d device(s)", riskLevel*100, atRiskDevs, dangerousLevel*100, atDangerousDevs),
 		CurrentValueStatus: st,
 	}, nil
