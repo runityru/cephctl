@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo '[{"devid":"CT4000P3SSD8_XXXYYYZZZ60B","location":[],"daemons":[],"wear_level":0.090000003576278687},{"devid":"CT4000P3SSD8_XXXYYYZZZD0F","location":[{"host":"nuc03","dev":"nvme0n1","path":""}],"daemons":["osd.7","osd.8"],"wear_level":0.10000000149011612},{"devid":"CT4000P3SSD8_XXXYYYZZZFCE","location":[{"host":"nuc02","dev":"nvme0n1","path":""}],"daemons":["osd.4","osd.5"],"wear_level":0.10999999940395355}]'
