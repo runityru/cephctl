@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"os"
 	"os/exec"
-	"strings"
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -33,11 +32,9 @@ func New(binaryPath string) Ceph {
 }
 
 func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value string) error {
-	args := []string{"config", "set", section, key, value}
+	bin, args := mkCommand(c.binaryPath, []string{"config", "set", section, key, value})
 
-	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
-
-	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "error applying configuration")
@@ -47,11 +44,9 @@ func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value st
 
 func (c *ceph) ClusterReport(ctx context.Context) (models.ClusterReport, error) {
 	buf := &bytes.Buffer{}
-	args := []string{"report", "--format=json"}
+	bin, args := mkCommand(c.binaryPath, []string{"report", "--format=json"})
 
-	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
-
-	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -70,11 +65,9 @@ func (c *ceph) ClusterReport(ctx context.Context) (models.ClusterReport, error) 
 
 func (c ceph) ClusterStatus(ctx context.Context) (models.ClusterStatus, error) {
 	buf := &bytes.Buffer{}
-	args := []string{"status", "--format=json"}
+	bin, args := mkCommand(c.binaryPath, []string{"status", "--format=json"})
 
-	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
-
-	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -94,12 +87,9 @@ func (c ceph) ClusterStatus(ctx context.Context) (models.ClusterStatus, error) {
 func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
 	cfg := []cephModels.ConfigOption{}
 	buf := &bytes.Buffer{}
+	bin, args := mkCommand(c.binaryPath, []string{"config", "dump", "--format=json"})
 
-	args := []string{"config", "dump", "--format=json"}
-
-	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
-
-	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
@@ -124,11 +114,9 @@ func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
 }
 
 func (c *ceph) RemoveCephConfigOption(ctx context.Context, section, key string) error {
-	args := []string{"config", "rm", section, key}
+	bin, args := mkCommand(c.binaryPath, []string{"config", "rm", section, key})
 
-	log.Tracef("preparing to run %s %s", c.binaryPath, strings.Join(args, " "))
-
-	cmd := exec.CommandContext(ctx, c.binaryPath, args...)
+	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "error applying configuration")
