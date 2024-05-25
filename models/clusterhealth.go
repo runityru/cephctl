@@ -65,7 +65,7 @@ const (
 
 	// ClusterHealthIndicatorTypeOSDsDown reflects amount of OSD nodes which are down
 	//
-	// Description: Amount of monitors in down state
+	// Description: Amount of OSDs in down state
 	//
 	// Good: 0
 	// AtRisk: >0
@@ -100,6 +100,15 @@ const (
 	// AtRisk: 2
 	// Dangerous: >2
 	ClusterHealthIndicatorTypeOSDsNumDaemonVersions ClusterHealthIndicatorType = "OSD_NUM_DAEMON_VERSIONS"
+
+	// ClusterHealthIndicatorTypeOSDsOut reflects amount of OSD nodes which are out
+	//
+	// Description: Amount of OSDs in out state
+	//
+	// Good: 0
+	// AtRisk: >0
+	// Dangerous: n/a
+	ClusterHealthIndicatorTypeOSDsOut ClusterHealthIndicatorType = "OSD_OUT"
 
 	// ClusterHealthIndicatorTypeQuorum reflects monitor quorum status
 	//
