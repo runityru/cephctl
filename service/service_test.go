@@ -121,6 +121,11 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
+			Indicator:          models.ClusterHealthIndicatorTypeOSDsOut,
+			CurrentValue:       "0 of 15",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
 			Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
 			CurrentValue:       "0 of 0",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,

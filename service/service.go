@@ -16,6 +16,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.ClusterStatus,
 	clusterHealth.Quorum,
 	clusterHealth.OSDsDown,
+	clusterHealth.OSDsOut,
 	clusterHealth.MutesAmount,
 	clusterHealth.UncleanPGs,
 	clusterHealth.InactivePGs,
