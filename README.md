@@ -95,11 +95,29 @@ an easy way for end users.
 
 Pre-compiled binaries are available on per-release basis and provided on
 [GitHub Releases page](https://github.com/teran/cephctl/releases). Automatically
-generated changelog is available for each release.
+generated changelog is available for each release. And binaries are available for:
+
+* Linux
+* macOS
+* Windows
+
+Any of them could be used on end-user machine to interact with Ceph
+via SSH just like the following way:
+
+```shell
+cephctl --ceph-binary='ssh mon01 ceph' healthcheck
+```
+
+or by using environment variables to specify ceph binary:
+
+```shell
+export CEPHCTL_CEPH_BINARY='ssh mon01 ceph'
+cephctl healthcheck
+```
 
 ### Container image
 
-Since cephctl uses ceph binary to achieve cluster data container image based
+Since cephctl uses ceph binary to achieve cluster data, container image based
 on ceph official release image is also available. This image is designed as
 drop-in replacement for official ceph image to use for `cephadm shell` command.
 
