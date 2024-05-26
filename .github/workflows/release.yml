@@ -12,11 +12,44 @@ env:
   CEPH_VERSION: 18.2.2
 
 jobs:
+  hadolint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: articulate/actions-markdownlint@v1
+
+  unittests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22.x'
+      - name: Install dependencies
+        run: go mod download
+      - name: Test with the Go CLI
+        run: go test ./...
+      - name: Build
+        run: go build -v ./...
+
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
+    needs:
+      - hadolint
+      - markdownlint
+      - unittests
     steps:
       - name: Define build timestamp
         id: timestamp
@@ -25,18 +58,12 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - uses: hadolint/hadolint-action@v3.1.0
-        with:
-          dockerfile: Dockerfile
-      - uses: articulate/actions-markdownlint@v1
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.22.x'
       - name: Install dependencies
         run: go mod download
-      - name: Run tests
-        run: go test ./...
       - name: Build & Publish release release
         uses: goreleaser/goreleaser-action@v5
         with:
