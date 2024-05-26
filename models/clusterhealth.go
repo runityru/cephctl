@@ -120,6 +120,19 @@ const (
 	// Dangerous: n/a
 	ClusterHealthIndicatorTypeQuorum ClusterHealthIndicatorType = "QUORUM"
 
+	// ClusterHealthIndicatorTypeDownPGs reflects amount of PGs which are down
+	//
+	// Description: Down PGs indicator shows how many PGs are down i.e. are stored
+	// 	on OSDs which are down and there's no available copy or a way to reconstruct
+	// 	them
+	//
+	// Ref: https://docs.ceph.com/en/latest/rados/operations/monitoring-osd-pg/#monitoring-pg-states
+	//
+	// Good: 0
+	// AtRisk: n/a
+	// Dangerous: >0
+	ClusterHealthIndicatorTypeDownPGs ClusterHealthIndicatorType = "DOWN_PGS"
+
 	// ClusterHealthIndicatorTypeUncleanPGs reflects amount of PGs which are not in clean state
 	//
 	// Description: Inactive PGs indicator shows how many PGs are inactive i.e. can not be
