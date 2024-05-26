@@ -60,14 +60,22 @@ to adjust `ceph` binary path to access ceph in container and/or remote machine.
 
 ## Roadmap
 
-* [X] Apply declarative configuration for `ceph config`
-* [X] Dump cluster configuration to CephConfig specification
-* [X] Diff configuration against running configuration for `ceph config`
-* [X] Perform healthcheck based on current cluster status
-* [X] Add healthchecks based on current cluster configuration
-* [ ] Apply/Dump declarative configuration for `ceph osd set-*` stuff
-* [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
-* [ ] Apply/Dump declarative configuration for Pools
+* [X] v0.0.0
+  * [X] Apply declarative configuration for `ceph config`
+  * [X] Dump cluster configuration to CephConfig specification
+  * [X] Diff configuration against running configuration for `ceph config`
+  * [X] Perform healthcheck based on current cluster status
+  * [X] Add healthchecks based on current cluster configuration
+* [X] v0.1.0
+  * [X] Additional healthchecks based on hardware status
+  * [X] FreeBSD support in builds
+  * [X] Remote Ceph cluster access via SSH
+* [ ] v0.2.0
+  * [ ] Apply/Dump declarative configuration for `ceph osd set-*` stuff
+* [ ] v0.3.0
+  * [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
+* [ ] v0.4.0
+  * [ ] Apply/Dump declarative configuration for Pools
 
 ## Ceph compatibility
 
