@@ -18,6 +18,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.OSDsDown,
 	clusterHealth.OSDsOut,
 	clusterHealth.MutesAmount,
+	clusterHealth.DownPGs,
 	clusterHealth.UncleanPGs,
 	clusterHealth.InactivePGs,
 	clusterHealth.AllowCrimson,

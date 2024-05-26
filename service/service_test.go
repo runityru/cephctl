@@ -144,6 +144,11 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
+			Indicator:          models.ClusterHealthIndicatorTypeDownPGs,
+			CurrentValue:       "0 of 330",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
 			Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
 			CurrentValue:       "52 of 330",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
