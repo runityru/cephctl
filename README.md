@@ -142,3 +142,41 @@ command:
 go build -v -ldflags="-X 'main.appVersion=$(git rev-parse --short HEAD) (trunk build)' -X 'main.buildTimestamp=$(date -u +%Y-%m-%dT%H:%m:%SZ)'" -o dist/cephctl ./cmd/cephctl/...
 ```
 <!-- markdownlint-enable MD013 -->
+
+## Contribution
+
+cephctl is an open source project so you have the following ways to contribute:
+
+* Documentation
+* Fill issues
+* Fix bugs
+* Suggest/implement new features
+* Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/teran/cephctl/discussions)
+
+### Something about guidelines for the code
+
+There's no actually a particular guidelines for the code but there are some
+common rules about it based on TDD, DDD and SOLID, the list could be extended:
+
+#### Split layers of abstraction
+
+Each abstraction layer should be isolated: transport layer from data layer,
+DTO models from business logic models and so on.
+
+#### Write unit tests
+
+Since we gonna have amount of packages we can easily write tests, please don't
+ignore such ability.
+
+#### Isolate tests
+
+In many projects I've seen how test are using system-wide configuration files,
+system-wide binaries and so on - I think this is a bad, insecure, unsafe and
+irreproducible practice not allowing to be sure the tests are passed in new
+environment (on a new developer machine for instance).
+
+So all the tests in cephctl are isolated:
+
+* code running any commands runs scripts in tests emulating the expected behavior
+* command output payload is gathered from real installations
+* the only thing you need to run tests is go compiler
