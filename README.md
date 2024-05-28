@@ -76,6 +76,8 @@ to adjust `ceph` binary path to access ceph in container and/or remote machine.
   * [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
 * [ ] v0.4.0
   * [ ] Apply/Dump declarative configuration for Pools
+* [ ] v0.5.0
+  * [ ] Live balancing PGs across OSDs
 
 ## Ceph compatibility
 
