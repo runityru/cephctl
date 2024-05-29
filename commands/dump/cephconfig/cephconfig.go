@@ -2,14 +2,16 @@ package cephconfig
 
 import (
 	"context"
-	"fmt"
+
+	yaml "gopkg.in/yaml.v3"
 
 	"github.com/teran/cephctl/models"
+	"github.com/teran/cephctl/printer"
 	"github.com/teran/cephctl/service"
-	yaml "gopkg.in/yaml.v3"
 )
 
 type DumpCephConfigConfig struct {
+	Printer printer.Printer
 	Service service.Service
 }
 
@@ -34,6 +36,6 @@ func DumpCephConfig(ctx context.Context, dc DumpCephConfigConfig) error {
 		return err
 	}
 
-	fmt.Println(string(data))
+	dc.Printer.Println(string(data))
 	return nil
 }

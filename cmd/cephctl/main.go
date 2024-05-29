@@ -13,6 +13,7 @@ import (
 	dumpCephConfigCmd "github.com/teran/cephctl/commands/dump/cephconfig"
 	healthcheckCmd "github.com/teran/cephctl/commands/healthcheck"
 	"github.com/teran/cephctl/differ"
+	"github.com/teran/cephctl/printer"
 	"github.com/teran/cephctl/service"
 )
 
@@ -68,6 +69,7 @@ func main() {
 	}
 
 	svc := service.New(ceph.New(*cephBinary), differ.New())
+	prntr := printer.New(*diffColor)
 
 	switch appCmd {
 	case apply.FullCommand():
@@ -81,7 +83,7 @@ func main() {
 
 	case diff.FullCommand():
 		if err := diffCmd.Diff(ctx, diffCmd.DiffConfig{
-			Colorize: *diffColor,
+			Printer:  prntr,
 			Service:  svc,
 			SpecFile: *diffSpecFile,
 		}); err != nil {
@@ -91,13 +93,17 @@ func main() {
 	case dumpCephConfig.FullCommand():
 		log.Tracef("running dump command")
 		if err := dumpCephConfigCmd.DumpCephConfig(ctx, dumpCephConfigCmd.DumpCephConfigConfig{
+			Printer: prntr,
 			Service: svc,
 		}); err != nil {
 			panic(err)
 		}
 
 	case healthcheck.FullCommand():
-		if err := healthcheckCmd.Healthcheck(ctx, svc); err != nil {
+		if err := healthcheckCmd.Healthcheck(ctx, healthcheckCmd.HealthcheckConfig{
+			Printer: prntr,
+			Service: svc,
+		}); err != nil {
 			panic(err)
 		}
 
