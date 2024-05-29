@@ -36,16 +36,18 @@ var (
 		Envar("CEPHCTL_TRACE").
 		Bool()
 
-	apply         = app.Command("apply", "Apply ceph configuration")
-	applySpecFile = apply.Arg("filename", "Filename with configuration specification").Required().String()
-
-	diff      = app.Command("diff", "Show difference between running and desired configurations")
-	diffColor = diff.
+	colorize = app.
 			Flag("color", "Colorize diff output").
 			Short('c').
 			Envar("CEPHCTL_COLOR").
 			Default("true").
 			Bool()
+
+	apply         = app.Command("apply", "Apply ceph configuration")
+	applySpecFile = apply.Arg("filename", "Filename with configuration specification").Required().String()
+
+	diff = app.Command("diff", "Show difference between running and desired configurations")
+
 	diffSpecFile = diff.Arg("filename", "Filename with configuration specification").Required().String()
 
 	dump           = app.Command("dump", "Dump runtime configuration")
@@ -69,7 +71,7 @@ func main() {
 	}
 
 	svc := service.New(ceph.New(*cephBinary), differ.New())
-	prntr := printer.New(*diffColor)
+	prntr := printer.New(*colorize)
 
 	switch appCmd {
 	case apply.FullCommand():
