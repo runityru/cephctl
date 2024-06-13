@@ -1,5 +1,17 @@
 package models
 
+type OSDDaemon struct {
+	ID               uint16
+	Hostname         string
+	Architecture     string
+	FrontIP          string
+	BackIP           string
+	MemoryTotalBytes uint64
+	SwapTotalBytes   uint64
+	IsRotational     bool
+	Devices          []string
+}
+
 type ClusterReport struct {
 	AllowCrimson                 bool
 	Checks                       []ClusterStatusCheck
@@ -18,6 +30,7 @@ type ClusterReport struct {
 	NumPGs                       uint32
 	NumPGsByState                map[string]uint32
 	NumPools                     uint16
+	OSDDaemons                   []OSDDaemon
 	StretchMode                  bool
 	TotalOSDCapacityKB           uint64
 	TotalOSDUsedDataKB           uint64
