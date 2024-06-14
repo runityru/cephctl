@@ -174,6 +174,11 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
 		},
 		{
+			Indicator:          models.ClusterHealthIndicatorTypeIPCollision,
+			CurrentValue:       "all hosts have their own IPs",
+			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+		},
+		{
 			Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
 			CurrentValue:       ">50.0%: 1 device(s); >75.0%: 0 device(s)",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,

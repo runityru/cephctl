@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
@@ -1023,6 +1024,46 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		return models.ClusterReport{}, err
 	}
 
+	osdDaemons := []models.OSDDaemon{}
+	for _, osd := range r.OSDMetadata {
+		frontIP, err := parseCephIPAddress(osd.FrontAddr)
+		if err != nil {
+			return models.ClusterReport{}, errors.Wrap(err, "error parsing front_addr")
+		}
+
+		backIP, err := parseCephIPAddress(osd.BackAddr)
+		if err != nil {
+			return models.ClusterReport{}, errors.Wrap(err, "error parsing back_addr")
+		}
+
+		memoryTotalBytes, err := strconv.ParseUint(osd.MemTotalKb, 10, 64)
+		if err != nil {
+			return models.ClusterReport{}, errors.Wrap(err, "error parsing mem_total_kb value")
+		}
+
+		swapTotalBytes, err := strconv.ParseUint(osd.MemSwapKb, 10, 64)
+		if err != nil {
+			return models.ClusterReport{}, errors.Wrap(err, "error parsing mem_swap_kb value")
+		}
+
+		isRotational, err := strconv.ParseBool(osd.Rotational)
+		if err != nil {
+			return models.ClusterReport{}, errors.Wrap(err, "error parsing rotational value")
+		}
+
+		osdDaemons = append(osdDaemons, models.OSDDaemon{
+			ID:               uint16(osd.ID),
+			Hostname:         osd.Hostname,
+			Architecture:     osd.Arch,
+			FrontIP:          frontIP,
+			BackIP:           backIP,
+			MemoryTotalBytes: memoryTotalBytes,
+			SwapTotalBytes:   swapTotalBytes,
+			IsRotational:     isRotational,
+			Devices:          strings.Split(osd.Devices, ","),
+		})
+	}
+
 	return models.ClusterReport{
 		HealthStatus:                 crh,
 		Checks:                       checks,
@@ -1038,6 +1079,7 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		NumOSDsByRelease:             countOSDsByRelease(r.OSDMetadata),
 		NumOSDsByVersion:             countOSDsByVersion(r.OSDMetadata),
 		NumOSDsByDeviceType:          countOSDsByDeviceType(r.OSDMetadata),
+		OSDDaemons:                   osdDaemons,
 		TotalOSDCapacityKB:           r.OSDSum.Kb,
 		TotalOSDUsedDataKB:           r.OSDSum.KbUsedData,
 		TotalOSDUsedMetaKB:           r.OSDSum.KbUsedMeta,
@@ -1046,6 +1088,25 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		NumPGs:                       numPGs,
 		NumPGsByState:                numPGsByState,
 	}, nil
+}
+
+func parseCephIPAddress(in string) (string, error) {
+	addr := strings.SplitN(in, ":", 2)
+	if len(addr) != 2 {
+		return "", errors.New("malformed ceph address string")
+	}
+
+	addreses := strings.Split(addr[1], ",")
+	if len(addreses) != 2 {
+		return "", errors.New("malformed ceph address representation")
+	}
+
+	addressParts := strings.SplitN(addreses[0], ":", 2)
+	if len(addressParts) != 2 {
+		return "", errors.New("malformed ceph address string")
+	}
+
+	return addressParts[0], nil
 }
 
 func countOSDs(osds []ReportOSDMapOSD) (total, up, in, withoutClusterAddress uint16) {

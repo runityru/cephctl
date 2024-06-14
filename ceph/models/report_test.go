@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"github.com/teran/cephctl/models"
 )
@@ -62,6 +63,35 @@ func TestReportToSvc(t *testing.T) {
 		expOut models.ClusterReport
 	}
 
+	osdDaemons := []models.OSDDaemon{
+		{
+			ID:               0,
+			Hostname:         "nuc01",
+			Architecture:     "x86_64",
+			FrontIP:          "192.168.1.201",
+			BackIP:           "192.168.2.231",
+			MemoryTotalBytes: 65414276,
+			SwapTotalBytes:   0,
+			IsRotational:     false,
+			Devices: []string{
+				"sda",
+			},
+		},
+		{
+			ID:               1,
+			Hostname:         "nuc01",
+			Architecture:     "x86_64",
+			FrontIP:          "192.168.1.201",
+			BackIP:           "192.168.2.231",
+			MemoryTotalBytes: 65414276,
+			SwapTotalBytes:   0,
+			IsRotational:     false,
+			Devices: []string{
+				"nvme0n1",
+			},
+		},
+	}
+
 	tcs := []testCase{
 		{
 			name: "clean cluster",
@@ -76,13 +106,13 @@ func TestReportToSvc(t *testing.T) {
 				NumOSDsIn:       15,
 				NumOSDsUp:       15,
 				NumOSDsByRelease: map[string]uint16{
-					"reef": 15,
+					"reef": 2,
 				},
 				NumOSDsByVersion: map[string]uint16{
-					"18.2.2": 15,
+					"18.2.2": 2,
 				},
 				NumOSDsByDeviceType: map[string]uint16{
-					"ssd": 15,
+					"ssd": 2,
 				},
 				TotalOSDCapacityKB: uint64(22_321_704_960),
 				TotalOSDUsedDataKB: uint64(10_986_978_208),
@@ -97,6 +127,7 @@ func TestReportToSvc(t *testing.T) {
 					"clean":         278,
 					"remapped":      52,
 				},
+				OSDDaemons: osdDaemons,
 			},
 		},
 		{
@@ -123,13 +154,13 @@ func TestReportToSvc(t *testing.T) {
 				NumOSDsIn:       13,
 				NumOSDsUp:       15,
 				NumOSDsByRelease: map[string]uint16{
-					"reef": 15,
+					"reef": 2,
 				},
 				NumOSDsByVersion: map[string]uint16{
-					"18.2.2": 15,
+					"18.2.2": 2,
 				},
 				NumOSDsByDeviceType: map[string]uint16{
-					"ssd": 15,
+					"ssd": 2,
 				},
 				TotalOSDCapacityKB: 18_729_263_104,
 				TotalOSDUsedDataKB: 10_393_147_824,
@@ -145,6 +176,7 @@ func TestReportToSvc(t *testing.T) {
 					"clean":            250,
 					"remapped":         153,
 				},
+				OSDDaemons: osdDaemons,
 			},
 		},
 		{
@@ -201,13 +233,13 @@ func TestReportToSvc(t *testing.T) {
 				NumOSDsIn:       14,
 				NumOSDsUp:       8,
 				NumOSDsByRelease: map[string]uint16{
-					"reef": 14,
+					"reef": 2,
 				},
 				NumOSDsByVersion: map[string]uint16{
-					"18.2.2": 14,
+					"18.2.2": 2,
 				},
 				NumOSDsByDeviceType: map[string]uint16{
-					"ssd": 14,
+					"ssd": 2,
 				},
 				TotalOSDCapacityKB: 16_985_456_640,
 				TotalOSDUsedDataKB: 7_161_124_160,
@@ -223,6 +255,7 @@ func TestReportToSvc(t *testing.T) {
 					"peered":     20,
 					"undersized": 111,
 				},
+				OSDDaemons: osdDaemons,
 			},
 		},
 	}
@@ -351,4 +384,41 @@ func TestCountPGs(t *testing.T) {
 		"clean":         8,
 		"down":          10,
 	}, byState)
+}
+
+func TestParseCephIPAddress(t *testing.T) {
+	type testCase struct {
+		name     string
+		in       string
+		expOut   string
+		expError error
+	}
+
+	tcs := []testCase{
+		{
+			name:   "valid ceph address string",
+			in:     "[v2:192.168.2.232:6802/2418,v1:192.168.2.232:6803/2418]",
+			expOut: "192.168.2.232",
+		},
+		{
+			name:     "invalid ceph address string",
+			in:       "blah",
+			expError: errors.New("malformed ceph address string"),
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			r := require.New(t)
+
+			out, err := parseCephIPAddress(tc.in)
+			if tc.expError != nil {
+				r.Error(err)
+				r.Equal(tc.expError.Error(), err.Error())
+			} else {
+				r.NoError(err)
+				r.Equal(tc.expOut, out)
+			}
+		})
+	}
 }

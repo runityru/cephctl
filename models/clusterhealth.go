@@ -42,6 +42,14 @@ const (
 	// Dangerous: >0
 	ClusterHealthIndicatorTypeInactivePGs ClusterHealthIndicatorType = "INACTIVE_PGS"
 
+	// ClusterHealthIndicatorTypeIPCollision ensures each IP is used by the only OSD daemon
+	// 	active state
+	//
+	// Good: no collisions
+	// AtRisk: n/a
+	// Dangerous: collisions found
+	ClusterHealthIndicatorTypeIPCollision ClusterHealthIndicatorType = "IP_COLLISION"
+
 	// ClusterHealthIndicatorTypeMonsDown reflects amount of monitor nodes which are down
 	//
 	// Description: amount of monitors which are not up at the moment

@@ -24,6 +24,7 @@ var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
 	clusterHealth.AllowCrimson,
 	clusterHealth.OSDsMetadataSize,
 	clusterHealth.OSDsNumDaemonVersions,
+	clusterHealth.IPCollision,
 	clusterHealth.DeviceHealth,
 }
 
