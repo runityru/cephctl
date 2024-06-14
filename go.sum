@@ -28,8 +28,8 @@ github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/teran/go-ptr v0.0.0-20231104104131-833247b0ca04 h1:vTC+wjH9Dt1QGOrbV5WxuDEtRlJCGzWOB2HxSP3OAA0=
-github.com/teran/go-ptr v0.0.0-20231104104131-833247b0ca04/go.mod h1:uud0e9f+nf1+rpfI1BhBKpMm+bRvDzn6zxaXHCK3C4k=
+github.com/teran/go-ptr v1.1.0 h1:c/5SPr+FB4zfmmKVB+KTCNKpgC/zWKBY5JHReL84lKU=
+github.com/teran/go-ptr v1.1.0/go.mod h1:2gyUP12bjbvBfyXm/NflOYJHONy415pNVeSTOZHna+A=
 github.com/vmihailenco/msgpack/v5 v5.3.5 h1:5gO0H1iULLWGhs2H5tbAHIZTV8/cYafcFOr9znI5mJU=
 github.com/vmihailenco/msgpack/v5 v5.3.5/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q/V5KbhBonMG9jc=
 github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
