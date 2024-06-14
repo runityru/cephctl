@@ -29,8 +29,14 @@ var (
 			Default("/usr/bin/ceph").
 			String()
 
+	debug = app.
+		Flag("debug", "Enable debug mode").
+		Short('d').
+		Envar("CEPHCTL_DEBUG").
+		Bool()
+
 	trace = app.
-		Flag("trace", "Enable trace mode").
+		Flag("trace", "Enable trace mode (debug mode on steroids)").
 		Short('t').
 		Envar("CEPHCTL_TRACE").
 		Bool()
@@ -64,7 +70,13 @@ func main() {
 		log.SetFormatter(&log.TextFormatter{
 			FullTimestamp: true,
 		})
-		log.Debug("Debug mode is enabled. Beware of verbosity!")
+		log.Trace("Trace mode is enabled. Beware of verbosity!")
+	} else if *debug {
+		log.SetLevel(log.DebugLevel)
+		log.SetFormatter(&log.TextFormatter{
+			FullTimestamp: true,
+		})
+		log.Trace("Debug mode is enabled.")
 	}
 
 	svc := service.New(ceph.New(*cephBinary), differ.New())
