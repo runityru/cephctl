@@ -13,6 +13,7 @@ import (
 	dumpCephConfigCmd "github.com/teran/cephctl/commands/dump/cephconfig"
 	healthcheckCmd "github.com/teran/cephctl/commands/healthcheck"
 	"github.com/teran/cephctl/differ"
+	"github.com/teran/cephctl/printer"
 	"github.com/teran/cephctl/service"
 )
 
@@ -41,16 +42,18 @@ var (
 		Envar("CEPHCTL_TRACE").
 		Bool()
 
-	apply         = app.Command("apply", "Apply ceph configuration")
-	applySpecFile = apply.Arg("filename", "Filename with configuration specification").Required().String()
-
-	diff      = app.Command("diff", "Show difference between running and desired configurations")
-	diffColor = diff.
+	colorize = app.
 			Flag("color", "Colorize diff output").
 			Short('c').
 			Envar("CEPHCTL_COLOR").
 			Default("true").
 			Bool()
+
+	apply         = app.Command("apply", "Apply ceph configuration")
+	applySpecFile = apply.Arg("filename", "Filename with configuration specification").Required().String()
+
+	diff = app.Command("diff", "Show difference between running and desired configurations")
+
 	diffSpecFile = diff.Arg("filename", "Filename with configuration specification").Required().String()
 
 	dump           = app.Command("dump", "Dump runtime configuration")
@@ -80,6 +83,7 @@ func main() {
 	}
 
 	svc := service.New(ceph.New(*cephBinary), differ.New())
+	prntr := printer.New(*colorize)
 
 	switch appCmd {
 	case apply.FullCommand():
@@ -93,7 +97,7 @@ func main() {
 
 	case diff.FullCommand():
 		if err := diffCmd.Diff(ctx, diffCmd.DiffConfig{
-			Colorize: *diffColor,
+			Printer:  prntr,
 			Service:  svc,
 			SpecFile: *diffSpecFile,
 		}); err != nil {
@@ -103,13 +107,17 @@ func main() {
 	case dumpCephConfig.FullCommand():
 		log.Tracef("running dump command")
 		if err := dumpCephConfigCmd.DumpCephConfig(ctx, dumpCephConfigCmd.DumpCephConfigConfig{
+			Printer: prntr,
 			Service: svc,
 		}); err != nil {
 			panic(err)
 		}
 
 	case healthcheck.FullCommand():
-		if err := healthcheckCmd.Healthcheck(ctx, svc); err != nil {
+		if err := healthcheckCmd.Healthcheck(ctx, healthcheckCmd.HealthcheckConfig{
+			Printer: prntr,
+			Service: svc,
+		}); err != nil {
 			panic(err)
 		}
 
