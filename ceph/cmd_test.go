@@ -12,6 +12,6 @@ func TestMkCommand(t *testing.T) {
 	bin, args := mkCommand("testcmd", []string{"arg1", "arg2"})
 	r.Equal(shellCommand, bin)
 	r.Equal([]string{
-		shellArg, "testcmd arg1 arg2",
+		shellArg, "testcmd \"arg1\" \"arg2\"",
 	}, args)
 }
