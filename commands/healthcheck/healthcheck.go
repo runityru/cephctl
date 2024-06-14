@@ -1,29 +1,34 @@
-package status
+package healthcheck
 
 import (
 	"context"
 
-	"github.com/fatih/color"
 	"github.com/teran/cephctl/models"
+	"github.com/teran/cephctl/printer"
 	"github.com/teran/cephctl/service"
 )
 
-func Healthcheck(ctx context.Context, svc service.Service) error {
-	indicators, err := svc.CheckClusterHealth(ctx)
+type HealthcheckConfig struct {
+	Service service.Service
+	Printer printer.Printer
+}
+
+func Healthcheck(ctx context.Context, hc HealthcheckConfig) error {
+	indicators, err := hc.Service.CheckClusterHealth(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, indicator := range indicators {
-		var printFn func(string, ...interface{}) = color.HiRed
+		var printFn func(string, ...any) = hc.Printer.HiRed
 
 		switch indicator.CurrentValueStatus {
 		case models.ClusterHealthIndicatorStatusGood:
-			printFn = color.Green
+			printFn = hc.Printer.Green
 		case models.ClusterHealthIndicatorStatusAtRisk:
-			printFn = color.Yellow
+			printFn = hc.Printer.Yellow
 		case models.ClusterHealthIndicatorStatusDangerous:
-			printFn = color.Red
+			printFn = hc.Printer.Red
 		}
 
 		printFn(
