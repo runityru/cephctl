@@ -33,7 +33,9 @@ func (d *differ) DiffCephConfig(ctx context.Context, from, to models.CephConfig)
 		return nil, errors.Wrap(err, "error comparing current and desired configuration")
 	}
 
-	log.Tracef("diff generated: %#v", changelog)
+	log.WithFields(log.Fields{
+		"component": "differ",
+	}).Tracef("diff generated: %#v", changelog)
 
 	changes := []models.CephConfigDifference{}
 	for _, change := range changelog {

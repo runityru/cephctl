@@ -53,7 +53,9 @@ func (s *service) ApplyCephConfig(ctx context.Context, cfg models.CephConfig) er
 		return errors.Wrap(err, "error comparing current and desired configuration")
 	}
 
-	log.Tracef("changelog: %#v", changes)
+	log.WithFields(log.Fields{
+		"component": "service",
+	}).Tracef("changelog: %#v", changes)
 
 	for _, change := range changes {
 		switch change.Kind {

@@ -79,7 +79,7 @@ func main() {
 		log.SetFormatter(&log.TextFormatter{
 			FullTimestamp: true,
 		})
-		log.Trace("Debug mode is enabled.")
+		log.Debug("Debug mode is enabled.")
 	}
 
 	svc := service.New(ceph.New(*cephBinary), differ.New())
@@ -87,7 +87,7 @@ func main() {
 
 	switch appCmd {
 	case apply.FullCommand():
-		log.Tracef("running apply command")
+		log.Debug("running apply command")
 		if err := applyCmd.Apply(ctx, applyCmd.ApplyConfig{
 			Service:  svc,
 			SpecFile: *applySpecFile,
@@ -96,6 +96,7 @@ func main() {
 		}
 
 	case diff.FullCommand():
+		log.Debug("running diff command")
 		if err := diffCmd.Diff(ctx, diffCmd.DiffConfig{
 			Printer:  prntr,
 			Service:  svc,
@@ -105,7 +106,7 @@ func main() {
 		}
 
 	case dumpCephConfig.FullCommand():
-		log.Tracef("running dump command")
+		log.Debug("running dump command")
 		if err := dumpCephConfigCmd.DumpCephConfig(ctx, dumpCephConfigCmd.DumpCephConfigConfig{
 			Printer: prntr,
 			Service: svc,
