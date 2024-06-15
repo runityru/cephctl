@@ -39,7 +39,9 @@ func Diff(ctx context.Context, ac DiffConfig) error {
 		}
 
 		for _, change := range changes {
-			log.Tracef("change: %#v", change)
+			log.WithFields(log.Fields{
+				"component": "command",
+			}).Tracef("change: %#v", change)
 
 			switch change.Kind {
 			case models.CephConfigDifferenceKindAdd:
