@@ -1,7 +1,6 @@
 package ceph
 
 import (
-	"strconv"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -12,7 +11,7 @@ func mkCommand(cephBinary string, args []string) (string, []string) {
 
 	escapedArgs := []string{}
 	for _, arg := range args {
-		escapedArgs = append(escapedArgs, strconv.Quote(arg))
+		escapedArgs = append(escapedArgs, handleArg(arg))
 	}
 
 	outArgs := []string{"-c", strings.Join(append([]string{cephBinary}, escapedArgs...), " ")}
@@ -20,4 +19,11 @@ func mkCommand(cephBinary string, args []string) (string, []string) {
 	log.Tracef("preparing command: `%s` `%#v`", outCmd, outArgs)
 
 	return shellCommand, outArgs
+}
+
+func handleArg(arg string) string {
+	arg = strings.ReplaceAll(arg, `\`, `\\`)
+	arg = strings.ReplaceAll(arg, "'", `\'`)
+
+	return "'" + arg + "'"
 }
