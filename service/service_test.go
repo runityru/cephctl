@@ -12,6 +12,7 @@ import (
 	"github.com/teran/cephctl/ceph"
 	"github.com/teran/cephctl/differ"
 	"github.com/teran/cephctl/models"
+	clusterHeath "github.com/teran/cephctl/service/cluster_health"
 )
 
 func init() {
@@ -115,73 +116,21 @@ func (s *serviceTestSuite) TestCheckClusterHealth() {
 		},
 	}, nil)
 
-	chi, err := s.svc.CheckClusterHealth(s.ctx)
+	chi, err := s.svc.CheckClusterHealth(s.ctx, []clusterHeath.ClusterHealthCheck{
+		func(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
+			return models.ClusterHealthIndicator{
+				Indicator:          models.ClusterHealthIndicatorTypeClusterStatus,
+				CurrentValue:       "HEALTH_OK",
+				CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
+			}, nil
+		},
+	})
 	s.Require().NoError(err)
 	s.Require().Equal([]models.ClusterHealthIndicator{
 		{
 			Indicator:          models.ClusterHealthIndicatorTypeClusterStatus,
 			CurrentValue:       "HEALTH_OK",
 			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeQuorum,
-			CurrentValue:       "5 of 5",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeOSDsDown,
-			CurrentValue:       "0 of 15",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeOSDsOut,
-			CurrentValue:       "0 of 15",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeMutesAmount,
-			CurrentValue:       "0 of 0",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeDownPGs,
-			CurrentValue:       "0 of 330",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeUncleanPGs,
-			CurrentValue:       "52 of 330",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeInactivePGs,
-			CurrentValue:       "0 of 330",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeAllowCrimson,
-			CurrentValue:       "false",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeOSDsMetadataSize,
-			CurrentValue:       "2.30%",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeOSDsNumDaemonVersions,
-			CurrentValue:       "1",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeIPCollision,
-			CurrentValue:       "all hosts have their own IPs",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusGood,
-		},
-		{
-			Indicator:          models.ClusterHealthIndicatorTypeDeviceHealthWearout,
-			CurrentValue:       ">50.0%: 1 device(s); >75.0%: 0 device(s)",
-			CurrentValueStatus: models.ClusterHealthIndicatorStatusAtRisk,
 		},
 	}, chi)
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/mock"
 	"github.com/teran/cephctl/models"
+	clusterHealth "github.com/teran/cephctl/service/cluster_health"
 )
 
 var _ Service = (*Mock)(nil)
@@ -27,7 +28,7 @@ func (m *Mock) DiffCephConfig(_ context.Context, cfg models.CephConfig) ([]model
 	return args.Get(0).([]models.CephConfigDifference), args.Error(1)
 }
 
-func (m *Mock) CheckClusterHealth(context.Context) ([]models.ClusterHealthIndicator, error) {
+func (m *Mock) CheckClusterHealth(context.Context, []clusterHealth.ClusterHealthCheck) ([]models.ClusterHealthIndicator, error) {
 	args := m.Called()
 	return args.Get(0).([]models.ClusterHealthIndicator), args.Error(1)
 }
