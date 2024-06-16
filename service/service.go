@@ -12,26 +12,10 @@ import (
 	clusterHealth "github.com/teran/cephctl/service/cluster_health"
 )
 
-var clusterHealthChecksList = []clusterHealth.ClusterHealthCheck{
-	clusterHealth.ClusterStatus,
-	clusterHealth.Quorum,
-	clusterHealth.OSDsDown,
-	clusterHealth.OSDsOut,
-	clusterHealth.MutesAmount,
-	clusterHealth.DownPGs,
-	clusterHealth.UncleanPGs,
-	clusterHealth.InactivePGs,
-	clusterHealth.AllowCrimson,
-	clusterHealth.OSDsMetadataSize,
-	clusterHealth.OSDsNumDaemonVersions,
-	clusterHealth.IPCollision,
-	clusterHealth.DeviceHealth,
-}
-
 type Service interface {
 	ApplyCephConfig(ctx context.Context, cfg models.CephConfig) error
 	DiffCephConfig(ctx context.Context, cfg models.CephConfig) ([]models.CephConfigDifference, error)
-	CheckClusterHealth(ctx context.Context) ([]models.ClusterHealthIndicator, error)
+	CheckClusterHealth(ctx context.Context, checks []clusterHealth.ClusterHealthCheck) ([]models.ClusterHealthIndicator, error)
 	DumpConfig(ctx context.Context) (models.CephConfig, error)
 }
 
@@ -74,7 +58,7 @@ func (s *service) ApplyCephConfig(ctx context.Context, cfg models.CephConfig) er
 	return nil
 }
 
-func (s *service) CheckClusterHealth(ctx context.Context) ([]models.ClusterHealthIndicator, error) {
+func (s *service) CheckClusterHealth(ctx context.Context, checks []clusterHealth.ClusterHealthCheck) ([]models.ClusterHealthIndicator, error) {
 	cr, err := s.c.ClusterReport(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving cluster status")
@@ -88,7 +72,7 @@ func (s *service) CheckClusterHealth(ctx context.Context) ([]models.ClusterHealt
 	cr.Devices = devices
 
 	indicators := []models.ClusterHealthIndicator{}
-	for _, checkFunc := range clusterHealthChecksList {
+	for _, checkFunc := range checks {
 		indicator, err := checkFunc(ctx, cr)
 		if err != nil {
 			return nil, err

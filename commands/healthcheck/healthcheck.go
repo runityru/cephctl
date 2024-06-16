@@ -6,6 +6,7 @@ import (
 	"github.com/teran/cephctl/models"
 	"github.com/teran/cephctl/printer"
 	"github.com/teran/cephctl/service"
+	clusterHealth "github.com/teran/cephctl/service/cluster_health"
 )
 
 type HealthcheckConfig struct {
@@ -14,7 +15,21 @@ type HealthcheckConfig struct {
 }
 
 func Healthcheck(ctx context.Context, hc HealthcheckConfig) error {
-	indicators, err := hc.Service.CheckClusterHealth(ctx)
+	indicators, err := hc.Service.CheckClusterHealth(ctx, []clusterHealth.ClusterHealthCheck{
+		clusterHealth.ClusterStatus,
+		clusterHealth.Quorum,
+		clusterHealth.OSDsDown,
+		clusterHealth.OSDsOut,
+		clusterHealth.MutesAmount,
+		clusterHealth.DownPGs,
+		clusterHealth.UncleanPGs,
+		clusterHealth.InactivePGs,
+		clusterHealth.AllowCrimson,
+		clusterHealth.OSDsMetadataSize,
+		clusterHealth.OSDsNumDaemonVersions,
+		clusterHealth.IPCollision,
+		clusterHealth.DeviceHealth,
+	})
 	if err != nil {
 		return err
 	}
