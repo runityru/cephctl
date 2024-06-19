@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/teran/go-ptr"
 
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 const flattenMapSeparator = ":::"

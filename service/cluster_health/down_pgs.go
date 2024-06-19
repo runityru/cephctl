@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 func DownPGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {

@@ -6,10 +6,10 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/teran/cephctl/ceph"
-	"github.com/teran/cephctl/differ"
-	"github.com/teran/cephctl/models"
-	clusterHealth "github.com/teran/cephctl/service/cluster_health"
+	"github.com/runityru/cephctl/ceph"
+	"github.com/runityru/cephctl/differ"
+	"github.com/runityru/cephctl/models"
+	clusterHealth "github.com/runityru/cephctl/service/cluster_health"
 )
 
 type Service interface {

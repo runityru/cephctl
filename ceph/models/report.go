@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 var ErrOverflow = errors.Errorf("unexpected overflow")

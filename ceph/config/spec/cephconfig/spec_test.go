@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 func TestNew(t *testing.T) {

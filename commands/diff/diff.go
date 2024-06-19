@@ -7,11 +7,11 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/teran/cephctl/ceph/config/spec"
-	"github.com/teran/cephctl/ceph/config/spec/cephconfig"
-	"github.com/teran/cephctl/models"
-	"github.com/teran/cephctl/printer"
-	"github.com/teran/cephctl/service"
+	"github.com/runityru/cephctl/ceph/config/spec"
+	"github.com/runityru/cephctl/ceph/config/spec/cephconfig"
+	"github.com/runityru/cephctl/models"
+	"github.com/runityru/cephctl/printer"
+	"github.com/runityru/cephctl/service"
 )
 
 type DiffConfig struct {

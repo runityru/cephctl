@@ -9,10 +9,10 @@ import (
 	"github.com/stretchr/testify/suite"
 	ptr "github.com/teran/go-ptr"
 
-	"github.com/teran/cephctl/ceph"
-	"github.com/teran/cephctl/differ"
-	"github.com/teran/cephctl/models"
-	clusterHeath "github.com/teran/cephctl/service/cluster_health"
+	"github.com/runityru/cephctl/ceph"
+	"github.com/runityru/cephctl/differ"
+	"github.com/runityru/cephctl/models"
+	clusterHeath "github.com/runityru/cephctl/service/cluster_health"
 )
 
 func init() {

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/stretchr/testify/mock"
-	"github.com/teran/cephctl/models"
-	clusterHealth "github.com/teran/cephctl/service/cluster_health"
+	"github.com/runityru/cephctl/models"
+	clusterHealth "github.com/runityru/cephctl/service/cluster_health"
 )
 
 var _ Service = (*Mock)(nil)

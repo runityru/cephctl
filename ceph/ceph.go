@@ -9,8 +9,8 @@ import (
 
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	cephModels "github.com/teran/cephctl/ceph/models"
-	"github.com/teran/cephctl/models"
+	cephModels "github.com/runityru/cephctl/ceph/models"
+	"github.com/runityru/cephctl/models"
 )
 
 type Ceph interface {

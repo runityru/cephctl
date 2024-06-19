@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/teran/go-ptr"
 
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 func TestStatusMapperEmpty(t *testing.T) {

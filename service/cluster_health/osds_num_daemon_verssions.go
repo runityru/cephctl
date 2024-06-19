@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 func OSDsNumDaemonVersions(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {

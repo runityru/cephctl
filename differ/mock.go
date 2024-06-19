@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/stretchr/testify/mock"
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 var _ Differ = (*Mock)(nil)

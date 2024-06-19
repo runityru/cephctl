@@ -5,9 +5,9 @@ import (
 
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/teran/cephctl/models"
-	"github.com/teran/cephctl/printer"
-	"github.com/teran/cephctl/service"
+	"github.com/runityru/cephctl/models"
+	"github.com/runityru/cephctl/printer"
+	"github.com/runityru/cephctl/service"
 )
 
 type DumpCephConfigConfig struct {

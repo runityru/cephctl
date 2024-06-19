@@ -7,14 +7,14 @@ import (
 
 	kingpin "github.com/alecthomas/kingpin/v2"
 	log "github.com/sirupsen/logrus"
-	"github.com/teran/cephctl/ceph"
-	applyCmd "github.com/teran/cephctl/commands/apply"
-	diffCmd "github.com/teran/cephctl/commands/diff"
-	dumpCephConfigCmd "github.com/teran/cephctl/commands/dump/cephconfig"
-	healthcheckCmd "github.com/teran/cephctl/commands/healthcheck"
-	"github.com/teran/cephctl/differ"
-	"github.com/teran/cephctl/printer"
-	"github.com/teran/cephctl/service"
+	"github.com/runityru/cephctl/ceph"
+	applyCmd "github.com/runityru/cephctl/commands/apply"
+	diffCmd "github.com/runityru/cephctl/commands/diff"
+	dumpCephConfigCmd "github.com/runityru/cephctl/commands/dump/cephconfig"
+	healthcheckCmd "github.com/runityru/cephctl/commands/healthcheck"
+	"github.com/runityru/cephctl/differ"
+	"github.com/runityru/cephctl/printer"
+	"github.com/runityru/cephctl/service"
 )
 
 var (
