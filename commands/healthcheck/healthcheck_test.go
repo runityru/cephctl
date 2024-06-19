@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/teran/cephctl/models"
-	"github.com/teran/cephctl/printer"
-	"github.com/teran/cephctl/service"
+	"github.com/runityru/cephctl/models"
+	"github.com/runityru/cephctl/printer"
+	"github.com/runityru/cephctl/service"
 )
 
 func TestHealthcheck(t *testing.T) {

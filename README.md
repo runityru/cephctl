@@ -1,6 +1,6 @@
 # cephctl
 
-[![Verify](https://github.com/teran/cephctl/actions/workflows/verify.yml/badge.svg?branch=master)](https://github.com/teran/cephctl/actions/workflows/verify.yml)
+[![Verify](https://github.com/runityru/cephctl/actions/workflows/verify.yml/badge.svg?branch=master)](https://github.com/runityru/cephctl/actions/workflows/verify.yml)
 
 Small utility to control Ceph cluster configuration just like any other declarative
     configuration
@@ -104,7 +104,7 @@ an easy way for end users.
 ### Pre-compiled binary
 
 Pre-compiled binaries are available on per-release basis and provided on
-[GitHub Releases page](https://github.com/teran/cephctl/releases). Automatically
+[GitHub Releases page](https://github.com/runityru/cephctl/releases). Automatically
 generated changelog is available for each release. And binaries are available for:
 
 * FreeBSD (amd64v1, amd64v2, amd64v3, arm64)
@@ -132,7 +132,7 @@ Since cephctl uses ceph binary to achieve cluster data, container image based
 on ceph official release image is also available. This image is designed as
 drop-in replacement for official ceph image to use for `cephadm shell` command.
 
-Container image is available at [GitHub Packages](https://github.com/teran/cephctl/pkgs/container/cephctl%2Fceph)
+Container image is available at [GitHub Packages](https://github.com/runityru/cephctl/pkgs/container/cephctl%2Fceph)
 
 ### Build from source
 
@@ -153,7 +153,7 @@ cephctl is an open source project so you have the following ways to contribute:
 * Fill issues
 * Fix bugs
 * Suggest/implement new features
-* Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/teran/cephctl/discussions)
+* Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/runityru/cephctl/discussions)
 
 ### Something about guidelines for the code
 

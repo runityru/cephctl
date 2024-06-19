@@ -1,7 +1,7 @@
 package cluster_health
 
 import (
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 )
 
 type testCase struct {

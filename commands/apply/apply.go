@@ -6,9 +6,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/teran/cephctl/ceph/config/spec"
-	"github.com/teran/cephctl/ceph/config/spec/cephconfig"
-	"github.com/teran/cephctl/service"
+	"github.com/runityru/cephctl/ceph/config/spec"
+	"github.com/runityru/cephctl/ceph/config/spec/cephconfig"
+	"github.com/runityru/cephctl/service"
 )
 
 type ApplyConfig struct {

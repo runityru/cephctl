@@ -3,10 +3,10 @@ package healthcheck
 import (
 	"context"
 
-	"github.com/teran/cephctl/models"
-	"github.com/teran/cephctl/printer"
-	"github.com/teran/cephctl/service"
-	clusterHealth "github.com/teran/cephctl/service/cluster_health"
+	"github.com/runityru/cephctl/models"
+	"github.com/runityru/cephctl/printer"
+	"github.com/runityru/cephctl/service"
+	clusterHealth "github.com/runityru/cephctl/service/cluster_health"
 )
 
 type HealthcheckConfig struct {

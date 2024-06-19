@@ -1,4 +1,4 @@
-module github.com/teran/cephctl
+module github.com/runityru/cephctl
 
 go 1.22.2
 

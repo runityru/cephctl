@@ -2,7 +2,7 @@ package cephconfig
 
 import (
 	"github.com/pkg/errors"
-	"github.com/teran/cephctl/models"
+	"github.com/runityru/cephctl/models"
 	yaml "gopkg.in/yaml.v3"
 )
 
