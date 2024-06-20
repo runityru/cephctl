@@ -1,6 +1,8 @@
 # cephctl
 
 [![Verify](https://github.com/runityru/cephctl/actions/workflows/verify.yml/badge.svg?branch=master)](https://github.com/runityru/cephctl/actions/workflows/verify.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/runityru/cephctl)](https://goreportcard.com/report/github.com/runityru/cephctl)
+[![Go Reference](https://pkg.go.dev/badge/github.com/runityru/cephctl.svg)](https://pkg.go.dev/github.com/runityru/cephctl)
 
 Small utility to control Ceph cluster configuration just like any other declarative
     configuration
