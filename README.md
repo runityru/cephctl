@@ -29,7 +29,9 @@ Flags:
       --[no-]help   Show context-sensitive help (also try --help-long and --help-man).
   -b, --ceph-binary="/usr/bin/ceph"
                     Specify path to ceph binary ($CEPHCTL_CEPH_BINARY)
-  -t, --[no-]trace  Enable trace mode ($CEPHCTL_TRACE)
+  -d, --[no-]debug  Enable debug mode ($CEPHCTL_DEBUG)
+  -t, --[no-]trace  Enable trace mode (debug mode on steroids) ($CEPHCTL_TRACE)
+  -c, --[no-]color  Colorize diff output ($CEPHCTL_COLOR)
 
 Commands:
 help [<command>...]
@@ -38,7 +40,7 @@ help [<command>...]
 apply <filename>
     Apply ceph configuration
 
-diff [<flags>] <filename>
+diff <filename>
     Show difference between running and desired configurations
 
 dump cephconfig
@@ -49,7 +51,6 @@ healthcheck
 
 version
     Print version and exit
-
 
 ```
 <!-- markdownlint-enable MD013 -->
