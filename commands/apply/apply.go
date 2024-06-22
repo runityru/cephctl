@@ -8,6 +8,7 @@ import (
 
 	"github.com/runityru/cephctl/ceph/config/spec"
 	"github.com/runityru/cephctl/ceph/config/spec/cephconfig"
+	"github.com/runityru/cephctl/ceph/config/spec/cephosdconfig"
 	"github.com/runityru/cephctl/service"
 )
 
@@ -30,6 +31,16 @@ func Apply(ctx context.Context, ac ApplyConfig) error {
 		}
 
 		if err := ac.Service.ApplyCephConfig(ctx, cfg); err != nil {
+			return err
+		}
+
+	case "cephosdconfig":
+		cfg, err := cephosdconfig.New(specData)
+		if err != nil {
+			return err
+		}
+
+		if err := ac.Service.ApplyCephOSDConfig(ctx, cfg); err != nil {
 			return err
 		}
 

@@ -2,6 +2,7 @@ package differ
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -16,6 +17,7 @@ const flattenMapSeparator = ":::"
 
 type Differ interface {
 	DiffCephConfig(ctx context.Context, from, to models.CephConfig) ([]models.CephConfigDifference, error)
+	DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDConfig) ([]models.CephOSDConfigDifference, error)
 }
 
 type differ struct{}
@@ -103,6 +105,61 @@ func (d *differ) DiffCephConfig(ctx context.Context, from, to models.CephConfig)
 
 		}
 	}
+
+	return changes, nil
+}
+
+func (d *differ) DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDConfig) ([]models.CephOSDConfigDifference, error) {
+	changelog, err := diff.Diff(from, to)
+	if err != nil {
+		return nil, errors.Wrap(err, "error comparing current and desired configuration")
+	}
+
+	changes := []models.CephOSDConfigDifference{}
+	for _, change := range changelog {
+		log.Printf("single changes: %#v", change)
+
+		var (
+			oldValue string
+			newValue string
+		)
+		switch change.Type {
+		case diff.UPDATE:
+			switch v := change.From.(type) {
+			case bool:
+				oldValue = strconv.FormatBool(v)
+			case float32:
+				oldValue = strconv.FormatFloat(float64(v), 'f', 2, 32)
+			case string:
+				oldValue = v
+			default:
+				log.Warnf("unexpected old value type: got %T", v)
+			}
+
+			switch v := change.To.(type) {
+			case bool:
+				newValue = strconv.FormatBool(v)
+			case float32:
+				newValue = strconv.FormatFloat(float64(v), 'f', 2, 32)
+			case string:
+				newValue = v
+			default:
+				log.Warnf("unexpected new value type: got %T", v)
+			}
+
+			changes = append(changes, models.CephOSDConfigDifference{
+				Key:      change.Path[0],
+				OldValue: oldValue,
+				Value:    newValue,
+			})
+
+		default:
+			log.Warnf("unexpected change type: `%s`", change.Type)
+			break
+		}
+	}
+
+	log.Printf("changes: %#v", changes)
 
 	return changes, nil
 }

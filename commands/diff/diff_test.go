@@ -12,7 +12,7 @@ import (
 	"github.com/runityru/cephctl/service"
 )
 
-func TestDiff(t *testing.T) {
+func TestDiffCephConfig(t *testing.T) {
 	r := require.New(t)
 
 	m := service.NewMock()
@@ -54,6 +54,39 @@ func TestDiff(t *testing.T) {
 		Printer:  p,
 		Service:  m,
 		SpecFile: "testdata/cephconfig.yaml",
+	})
+	r.NoError(err)
+}
+
+func TestDiffCephOSDConfig(t *testing.T) {
+	r := require.New(t)
+
+	m := service.NewMock()
+	defer m.AssertExpectations(t)
+
+	p := printer.NewMock()
+	defer p.AssertExpectations(t)
+
+	m.On("DiffCephOSDConfig", models.CephOSDConfig{
+		AllowCrimson:           true,
+		BackfillfullRatio:      0.9,
+		FullRatio:              0.95,
+		NearfullRatio:          0.85,
+		RequireMinCompatClient: "luminous",
+	}).Return([]models.CephOSDConfigDifference{
+		{
+			Key:      "allow_crimson",
+			OldValue: "false",
+			Value:    "true",
+		},
+	}, nil).Once()
+
+	p.On("Yellow", "~ %s %s -> %s", []any{"allow_crimson", "false", "true"}).Return().Once()
+
+	err := Diff(context.Background(), DiffConfig{
+		Printer:  p,
+		Service:  m,
+		SpecFile: "testdata/cephosdconfig.yaml",
 	})
 	r.NoError(err)
 }

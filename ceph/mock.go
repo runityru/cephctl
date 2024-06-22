@@ -23,6 +23,11 @@ func (m *Mock) ApplyCephConfigOption(ctx context.Context, section, key, value st
 	return args.Error(0)
 }
 
+func (m *Mock) ApplyCephOSDConfigOption(_ context.Context, key, value string) error {
+	args := m.Called(key, value)
+	return args.Error(0)
+}
+
 func (m *Mock) ClusterReport(ctx context.Context) (models.ClusterReport, error) {
 	args := m.Called()
 	return args.Get(0).(models.ClusterReport), args.Error(1)

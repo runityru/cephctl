@@ -9,6 +9,7 @@ import (
 
 	"github.com/runityru/cephctl/ceph/config/spec"
 	"github.com/runityru/cephctl/ceph/config/spec/cephconfig"
+	"github.com/runityru/cephctl/ceph/config/spec/cephosdconfig"
 	"github.com/runityru/cephctl/models"
 	"github.com/runityru/cephctl/printer"
 	"github.com/runityru/cephctl/service"
@@ -51,6 +52,25 @@ func Diff(ctx context.Context, ac DiffConfig) error {
 			case models.CephConfigDifferenceKindRemove:
 				ac.Printer.Red("- %s %s", change.Section, change.Key)
 			}
+		}
+
+	case "cephosdconfig":
+		cfg, err := cephosdconfig.New(specData)
+		if err != nil {
+			return err
+		}
+
+		changes, err := ac.Service.DiffCephOSDConfig(ctx, cfg)
+		if err != nil {
+			return err
+		}
+
+		for _, change := range changes {
+			log.WithFields(log.Fields{
+				"component": "command",
+			}).Tracef("change: %#v", change)
+
+			ac.Printer.Yellow("~ %s %s -> %s", change.Key, change.OldValue, change.Value)
 		}
 
 	default:
