@@ -56,6 +56,11 @@ func TestClusterReport(t *testing.T) {
 			"active": 234,
 			"clean":  234,
 		},
+		AllowCrimson:           false,
+		NearfullRatio:          0.85,
+		BackfillfullRatio:      0.9,
+		FullRatio:              0.95,
+		RequireMinCompatClient: "luminous",
 		OSDDaemons: []models.OSDDaemon{
 			{
 				ID:               0,
