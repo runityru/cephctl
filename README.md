@@ -1,6 +1,8 @@
 # cephctl
 
 [![Verify](https://github.com/runityru/cephctl/actions/workflows/verify.yml/badge.svg?branch=master)](https://github.com/runityru/cephctl/actions/workflows/verify.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/runityru/cephctl)](https://goreportcard.com/report/github.com/runityru/cephctl)
+[![Go Reference](https://pkg.go.dev/badge/github.com/runityru/cephctl.svg)](https://pkg.go.dev/github.com/runityru/cephctl)
 
 Small utility to control Ceph cluster configuration just like any other declarative
     configuration
@@ -27,7 +29,9 @@ Flags:
       --[no-]help   Show context-sensitive help (also try --help-long and --help-man).
   -b, --ceph-binary="/usr/bin/ceph"
                     Specify path to ceph binary ($CEPHCTL_CEPH_BINARY)
-  -t, --[no-]trace  Enable trace mode ($CEPHCTL_TRACE)
+  -d, --[no-]debug  Enable debug mode ($CEPHCTL_DEBUG)
+  -t, --[no-]trace  Enable trace mode (debug mode on steroids) ($CEPHCTL_TRACE)
+  -c, --[no-]color  Colorize diff output ($CEPHCTL_COLOR)
 
 Commands:
 help [<command>...]
@@ -36,7 +40,7 @@ help [<command>...]
 apply <filename>
     Apply ceph configuration
 
-diff [<flags>] <filename>
+diff <filename>
     Show difference between running and desired configurations
 
 dump cephconfig
@@ -47,7 +51,6 @@ healthcheck
 
 version
     Print version and exit
-
 
 ```
 <!-- markdownlint-enable MD013 -->
