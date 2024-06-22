@@ -5,10 +5,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/teran/go-ptr"
+
 	"github.com/runityru/cephctl/models"
 	"github.com/runityru/cephctl/printer"
 	"github.com/runityru/cephctl/service"
-	"github.com/teran/go-ptr"
 )
 
 func TestDiff(t *testing.T) {
