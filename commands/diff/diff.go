@@ -40,6 +40,10 @@ func Diff(ctx context.Context, ac DiffConfig) error {
 				return err
 			}
 
+			if len(descs) > 1 && len(changes) > 0 {
+				ac.Printer.Printf("%s:\n", desc.Kind)
+			}
+
 			for _, change := range changes {
 				log.WithFields(log.Fields{
 					"component": "command",
@@ -64,6 +68,10 @@ func Diff(ctx context.Context, ac DiffConfig) error {
 			changes, err := ac.Service.DiffCephOSDConfig(ctx, cfg)
 			if err != nil {
 				return err
+			}
+
+			if len(descs) > 1 && len(changes) > 0 {
+				ac.Printer.Printf("%s:\n", desc.Kind)
 			}
 
 			for _, change := range changes {
