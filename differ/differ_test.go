@@ -134,27 +134,27 @@ func (s *differTestSuite) TestDiffCephOSDConfig() {
 			},
 			expOut: []models.CephOSDConfigDifference{
 				{
-					Key:      "AllowCrimson",
+					Key:      "allow_crimson",
 					OldValue: "false",
 					Value:    "true",
 				},
 				{
-					Key:      "NearfullRatio",
+					Key:      "nearfull_ratio",
 					OldValue: "0.85",
 					Value:    "0.90",
 				},
 				{
-					Key:      "BackfillfullRatio",
+					Key:      "backfillfull_ratio",
 					OldValue: "0.90",
 					Value:    "0.95",
 				},
 				{
-					Key:      "FullRatio",
+					Key:      "full_ratio",
 					OldValue: "0.95",
 					Value:    "0.98",
 				},
 				{
-					Key:      "RequireMinCompatClient",
+					Key:      "require_min_compat_client",
 					OldValue: "luminous",
 					Value:    "reef",
 				},
