@@ -64,7 +64,7 @@ func (c *ceph) ApplyCephOSDConfigOption(ctx context.Context, key, value string) 
 	bin, args := mkCommand(c.binaryPath, keyArgs)
 
 	cmd := exec.CommandContext(ctx, bin, args...)
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "error applying OSD configuration")
 	}
