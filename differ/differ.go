@@ -117,12 +117,11 @@ func (d *differ) DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDC
 
 	changes := []models.CephOSDConfigDifference{}
 	for _, change := range changelog {
-		log.Printf("single changes: %#v", change)
-
 		var (
 			oldValue string
 			newValue string
 		)
+
 		switch change.Type {
 		case diff.UPDATE:
 			switch v := change.From.(type) {
@@ -158,8 +157,6 @@ func (d *differ) DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDC
 			break
 		}
 	}
-
-	log.Printf("changes: %#v", changes)
 
 	return changes, nil
 }
