@@ -18,34 +18,36 @@ type ApplyConfig struct {
 }
 
 func Apply(ctx context.Context, ac ApplyConfig) error {
-	kind, specData, err := spec.NewFromDescription(ac.SpecFile)
+	descs, err := spec.NewFromDescription(ac.SpecFile)
 	if err != nil {
 		return err
 	}
 
-	switch strings.ToLower(kind) {
-	case "cephconfig":
-		cfg, err := cephconfig.New(specData)
-		if err != nil {
-			return err
-		}
+	for _, desc := range descs {
+		switch strings.ToLower(desc.Kind) {
+		case "cephconfig":
+			cfg, err := cephconfig.New(desc.Spec)
+			if err != nil {
+				return err
+			}
 
-		if err := ac.Service.ApplyCephConfig(ctx, cfg); err != nil {
-			return err
-		}
+			if err := ac.Service.ApplyCephConfig(ctx, cfg); err != nil {
+				return err
+			}
 
-	case "cephosdconfig":
-		cfg, err := cephosdconfig.New(specData)
-		if err != nil {
-			return err
-		}
+		case "cephosdconfig":
+			cfg, err := cephosdconfig.New(desc.Spec)
+			if err != nil {
+				return err
+			}
 
-		if err := ac.Service.ApplyCephOSDConfig(ctx, cfg); err != nil {
-			return err
-		}
+			if err := ac.Service.ApplyCephOSDConfig(ctx, cfg); err != nil {
+				return err
+			}
 
-	default:
-		return errors.Errorf("unexpected specification kind: `%s`", kind)
+		default:
+			return errors.Errorf("unexpected specification kind: `%s`", desc.Kind)
+		}
 	}
 
 	return nil
