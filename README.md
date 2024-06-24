@@ -142,6 +142,12 @@ Container image is available at [GitHub Packages](https://github.com/runityru/ce
 It's possible to build cephctl from source by simply running the following
 command:
 
+```shell
+goreleaser build --snapshot --clean
+```
+
+or manually via Go compiler
+
 <!-- markdownlint-disable MD013 -->
 ```shell
 go build -v -ldflags="-X 'main.appVersion=$(git rev-parse --short HEAD) (trunk build)' -X 'main.buildTimestamp=$(date -u +%Y-%m-%dT%H:%m:%SZ)'" -o dist/cephctl ./cmd/cephctl/...
