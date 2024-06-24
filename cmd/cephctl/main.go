@@ -125,7 +125,7 @@ func main() {
 
 	case version.FullCommand():
 		fmt.Printf(
-			"%s %s built @ %s\n",
+			"%s v%s / built at %s\n",
 			os.Args[0], appVersion, buildTimestamp,
 		)
 		os.Exit(1)
