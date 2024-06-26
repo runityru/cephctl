@@ -137,6 +137,22 @@ drop-in replacement for official ceph image to use for `cephadm shell` command.
 
 Container image is available at [GitHub Packages](https://github.com/runityru/cephctl/pkgs/container/cephctl%2Fceph)
 
+To replace official Ceph image with the one containing cephctl in cephadm
+clusters just do:
+
+```shell
+# Set container image as a global parameter to all components
+ceph config set global container_image ghcr.io/runityru/cephctl/ceph:v18.2.2
+
+# Run upgrade procedure
+ceph orch upgrade start --ceph_version=18.2.2
+```
+
+Please note Ceph orch will automatically replace `container_image` parameter
+for each component with specific sha256 image ID instead of tag we defined
+manually. It's OK and it's a guarantee the image won't be changed in your
+cluster.
+
 ### Build from source
 
 It's possible to build cephctl from source by simply running the following
