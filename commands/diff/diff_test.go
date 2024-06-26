@@ -90,3 +90,66 @@ func TestDiffCephOSDConfig(t *testing.T) {
 	})
 	r.NoError(err)
 }
+
+func TestDiffMultidoc(t *testing.T) {
+	r := require.New(t)
+
+	m := service.NewMock()
+	defer m.AssertExpectations(t)
+
+	p := printer.NewMock()
+	defer p.AssertExpectations(t)
+
+	m.On("DiffCephConfig", models.CephConfig{
+		"global": {
+			"test": "value",
+		},
+	}).Return([]models.CephConfigDifference{
+		{
+			Kind:    models.CephConfigDifferenceKindAdd,
+			Section: "mon",
+			Key:     "test_key",
+			Value:   ptr.String("value"),
+		},
+		{
+			Kind:     models.CephConfigDifferenceKindChange,
+			Section:  "osd.3",
+			Key:      "test_key",
+			OldValue: ptr.String("old_value"),
+			Value:    ptr.String("value"),
+		},
+		{
+			Kind:    models.CephConfigDifferenceKindRemove,
+			Section: "osd",
+			Key:     "test_key",
+		},
+	}, nil).Once()
+
+	m.On("DiffCephOSDConfig", models.CephOSDConfig{
+		AllowCrimson:           true,
+		BackfillfullRatio:      0.9,
+		FullRatio:              0.95,
+		NearfullRatio:          0.85,
+		RequireMinCompatClient: "luminous",
+	}).Return([]models.CephOSDConfigDifference{
+		{
+			Key:      "allow_crimson",
+			OldValue: "false",
+			Value:    "true",
+		},
+	}, nil).Once()
+
+	call1 := p.On("Printf", "%s:\n", []any{"CephConfig"}).Return().Once()
+	call2 := p.On("Green", "+ %s %s %s", []any{"mon", "test_key", "value"}).Return().NotBefore(call1).Once()
+	call3 := p.On("Yellow", "~ %s %s %s -> %s", []any{"osd.3", "test_key", "old_value", "value"}).Return().NotBefore(call2).Once()
+	call4 := p.On("Red", "- %s %s", []any{"osd", "test_key"}).Return().NotBefore(call3).Once()
+	call5 := p.On("Printf", "%s:\n", []any{"CephOSDConfig"}).Return().NotBefore(call4).Once()
+	p.On("Yellow", "~ %s %s -> %s", []any{"allow_crimson", "false", "true"}).Return().NotBefore(call5).Once()
+
+	err := Diff(context.Background(), DiffConfig{
+		Printer:  p,
+		Service:  m,
+		SpecFile: "testdata/multidoc.yaml",
+	})
+	r.NoError(err)
+}

@@ -9,6 +9,7 @@ import (
 type Printer interface {
 	Green(format string, a ...any)
 	HiRed(format string, a ...any)
+	Printf(format string, a ...any)
 	Println(a ...any)
 	Red(format string, a ...any)
 	Yellow(format string, a ...any)
@@ -28,6 +29,10 @@ func (p *printer) Green(format string, a ...any) {
 
 func (p *printer) HiRed(format string, a ...any) {
 	color.HiRed(format, a...)
+}
+
+func (p *printer) Printf(format string, a ...any) {
+	fmt.Printf(format, a...)
 }
 
 func (p *printer) Println(a ...any) {
