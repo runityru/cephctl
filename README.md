@@ -73,7 +73,7 @@ to adjust `ceph` binary path to access ceph in container and/or remote machine.
   * [X] Additional healthchecks based on hardware status
   * [X] FreeBSD support in builds
   * [X] Remote Ceph cluster access via SSH
-* [ ] v0.2.0
+* [X] v0.2.0
   * [X] Apply/Dump declarative configuration for `ceph osd set-*` stuff
 * [ ] v0.3.0
   * [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
