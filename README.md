@@ -46,6 +46,9 @@ diff <filename>
 dump cephconfig
     dump Ceph runtime configuration
 
+dump cephosdconfig
+    dump Ceph OSD configuration
+
 healthcheck
     Perform a cluster healthcheck and print report
 
