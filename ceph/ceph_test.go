@@ -22,6 +22,23 @@ func TestApplyCephConfigOption(t *testing.T) {
 	r.NoError(err)
 }
 
+func TestApplyCephOSDConfigOption(t *testing.T) {
+	r := require.New(t)
+
+	c := New("testdata/ceph_mock_ApplyCephOSDConfigOption")
+	err := c.ApplyCephOSDConfigOption(context.Background(), "AllowCrimson", "true")
+	r.NoError(err)
+}
+
+func TestApplyCephOSDConfigOptionInvalidKey(t *testing.T) {
+	r := require.New(t)
+
+	c := New("testdata/ceph_mock_ApplyCephOSDConfigOption")
+	err := c.ApplyCephOSDConfigOption(context.Background(), "key", "value")
+	r.Error(err)
+	r.Equal("unexpected key: `key`", err.Error())
+}
+
 func TestClusterReport(t *testing.T) {
 	r := require.New(t)
 

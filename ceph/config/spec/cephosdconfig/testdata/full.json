@@ -1,0 +1,7 @@
+{
+    "allow_crimson": true,
+    "nearfull_ratio": 0.75,
+    "backfillfull_ratio": 0.8,
+    "full_ratio": 0.85,
+    "require_min_compat_client": "squid"
+}
