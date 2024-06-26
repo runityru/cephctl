@@ -121,7 +121,6 @@ func (d *differ) DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDC
 			oldValue string
 			newValue string
 		)
-
 		switch change.Type {
 		case diff.UPDATE:
 			switch v := change.From.(type) {
