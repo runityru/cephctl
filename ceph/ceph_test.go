@@ -22,6 +22,23 @@ func TestApplyCephConfigOption(t *testing.T) {
 	r.NoError(err)
 }
 
+func TestApplyCephOSDConfigOption(t *testing.T) {
+	r := require.New(t)
+
+	c := New("testdata/ceph_mock_ApplyCephOSDConfigOption")
+	err := c.ApplyCephOSDConfigOption(context.Background(), "AllowCrimson", "true")
+	r.NoError(err)
+}
+
+func TestApplyCephOSDConfigOptionInvalidKey(t *testing.T) {
+	r := require.New(t)
+
+	c := New("testdata/ceph_mock_ApplyCephOSDConfigOption")
+	err := c.ApplyCephOSDConfigOption(context.Background(), "key", "value")
+	r.Error(err)
+	r.Equal("unexpected key: `key`", err.Error())
+}
+
 func TestClusterReport(t *testing.T) {
 	r := require.New(t)
 
@@ -56,6 +73,11 @@ func TestClusterReport(t *testing.T) {
 			"active": 234,
 			"clean":  234,
 		},
+		AllowCrimson:           false,
+		NearfullRatio:          0.85,
+		BackfillfullRatio:      0.9,
+		FullRatio:              0.95,
+		RequireMinCompatClient: "luminous",
 		OSDDaemons: []models.OSDDaemon{
 			{
 				ID:               0,

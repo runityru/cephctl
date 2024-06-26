@@ -2,50 +2,51 @@ package spec
 
 import (
 	"encoding/json"
+	"io"
 	"os"
-	"path/filepath"
-	"strings"
 
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v3"
 )
 
-type description struct {
+type Description struct {
 	Kind string          `json:"kind"`
 	Spec json.RawMessage `json:"spec"`
 }
 
-func NewFromDescription(filename string) (string, json.RawMessage, error) {
-	desc := description{}
+type yamlIntermediate struct {
+	Kind string `yaml:"kind"`
+	Spec any    `yaml:"spec"`
+}
 
-	data, err := os.ReadFile(filename)
+func NewFromDescription(filename string) ([]Description, error) {
+	fp, err := os.Open(filename)
 	if err != nil {
-		return "", nil, errors.Wrap(err, "error reading configuration file")
+		return nil, errors.Wrap(err, "error opening spec file")
+	}
+	defer fp.Close()
+
+	docs := []Description{}
+	dec := yaml.NewDecoder(fp)
+	for {
+		v := yamlIntermediate{}
+		err := dec.Decode(&v)
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return nil, errors.Wrap(err, "error unmarshaling document")
+		}
+		spec, err := json.Marshal(v.Spec)
+		if err != nil {
+			return nil, errors.Wrap(err, "error marshaling intermediate data structure")
+		}
+
+		docs = append(docs, Description{
+			Kind: v.Kind,
+			Spec: json.RawMessage(spec),
+		})
 	}
 
-	switch strings.ToLower(filepath.Ext(filename)) {
-	case ".yml", ".yaml":
-		type intermediate struct {
-			Kind string `yaml:"kind"`
-			Spec any    `yaml:"spec"`
-		}
-
-		d := intermediate{}
-		err := yaml.Unmarshal(data, &d)
-		if err != nil {
-			return "", nil, errors.Wrap(err, "error unmarshaling intermediate configuration")
-		}
-
-		spec, err := json.Marshal(d.Spec)
-		if err != nil {
-			return "", nil, errors.Wrap(err, "error marshaling intermediate configuration")
-		}
-		return d.Kind, json.RawMessage(spec), nil
-	case ".json":
-		// skip since supported natively
-	default:
-		return "", nil, errors.Errorf("unexpected file format: `%s`", filepath.Ext(filename))
-	}
-
-	return desc.Kind, desc.Spec, json.Unmarshal(data, &desc)
+	return docs, nil
 }

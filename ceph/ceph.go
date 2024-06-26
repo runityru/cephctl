@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"os"
 	"os/exec"
 
 	"github.com/pkg/errors"
@@ -16,6 +15,7 @@ import (
 
 type Ceph interface {
 	ApplyCephConfigOption(ctx context.Context, section, key, value string) error
+	ApplyCephOSDConfigOption(ctx context.Context, key, value string) error
 	ClusterReport(ctx context.Context) (models.ClusterReport, error)
 	ClusterStatus(ctx context.Context) (models.ClusterStatus, error)
 	DumpConfig(ctx context.Context) (models.CephConfig, error)
@@ -37,10 +37,38 @@ func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value st
 	bin, args := mkCommand(c.binaryPath, []string{"config", "set", section, key, value})
 
 	cmd := exec.CommandContext(ctx, bin, args...)
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "error applying configuration")
 	}
+	return nil
+}
+
+func (c *ceph) ApplyCephOSDConfigOption(ctx context.Context, key, value string) error {
+	keyArgs := []string{}
+	switch key {
+	case "AllowCrimson":
+		keyArgs = []string{"osd", "set-allow-crimson", "--yes-i-really-mean-it"}
+	case "BackfillfullRatio":
+		keyArgs = []string{"osd", "set-backfillfull-ratio", value}
+	case "FullRatio":
+		keyArgs = []string{"osd", "set-full-ratio", value}
+	case "NearfullRatio":
+		keyArgs = []string{"osd", "set-nearfull-ratio", value}
+	case "RequireMinCompatClient":
+		keyArgs = []string{"osd", "set-require-min-compat-client", value}
+	default:
+		return errors.Errorf("unexpected key: `%s`", key)
+	}
+
+	bin, args := mkCommand(c.binaryPath, keyArgs)
+
+	cmd := exec.CommandContext(ctx, bin, args...)
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
+	if err := cmd.Run(); err != nil {
+		return errors.Wrap(err, "error applying OSD configuration")
+	}
+
 	return nil
 }
 
@@ -50,7 +78,7 @@ func (c *ceph) ClusterReport(ctx context.Context) (models.ClusterReport, error) 
 
 	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return models.ClusterReport{}, errors.Wrap(err, "error retrieving report")
 	}
@@ -71,7 +99,7 @@ func (c ceph) ClusterStatus(ctx context.Context) (models.ClusterStatus, error) {
 
 	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return models.ClusterStatus{}, errors.Wrap(err, "error retrieving cluster status")
 	}
@@ -93,7 +121,7 @@ func (c *ceph) DumpConfig(ctx context.Context) (models.CephConfig, error) {
 
 	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return nil, errors.Wrap(err, "error running command")
 	}
@@ -122,7 +150,7 @@ func (c *ceph) ListDevices(ctx context.Context) ([]models.Device, error) {
 
 	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Stdout = buf
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return nil, errors.Wrap(err, "error listing devices")
 	}
@@ -147,7 +175,7 @@ func (c *ceph) RemoveCephConfigOption(ctx context.Context, section, key string) 
 	bin, args := mkCommand(c.binaryPath, []string{"config", "rm", section, key})
 
 	cmd := exec.CommandContext(ctx, bin, args...)
-	cmd.Stderr = os.Stderr
+	cmd.Stderr = log.StandardLogger().WriterLevel(log.DebugLevel)
 	if err := cmd.Run(); err != nil {
 		return errors.Wrap(err, "error applying configuration")
 	}

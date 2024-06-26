@@ -1,0 +1,8 @@
+---
+kind: CephOSDConfig
+spec:
+    allow_crimson: true
+    backfillfull_ratio: 0.9
+    full_ratio: 0.95
+    nearfull_ratio: 0.85
+    require_min_compat_client: luminous

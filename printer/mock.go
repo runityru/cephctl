@@ -20,6 +20,10 @@ func (m *Mock) HiRed(format string, a ...any) {
 	m.Called(format, a)
 }
 
+func (m *Mock) Printf(format string, a ...any) {
+	m.Called(format, a)
+}
+
 func (m *Mock) Println(a ...any) {
 	m.Called(a)
 }
