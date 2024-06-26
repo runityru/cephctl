@@ -142,7 +142,7 @@ clusters just do:
 
 ```shell
 # Set container image as a global parameter to all components
-ceph config set global container_image ghcr.io/runityru/cephctl/ceph:v18.2.2
+ceph config set mgr mgr/cephadm/container_image_base ghcr.io/runityru/cephctl/ceph
 
 # Run upgrade procedure
 ceph orch upgrade start --ceph_version=18.2.2
