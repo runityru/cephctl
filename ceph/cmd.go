@@ -14,7 +14,7 @@ func mkCommand(cephBinary string, args []string) (string, []string) {
 		escapedArgs = append(escapedArgs, handleArg(arg))
 	}
 
-	outArgs := []string{"-c", strings.Join(append([]string{cephBinary}, escapedArgs...), " ")}
+	outArgs := []string{shellArg, strings.Join(append([]string{cephBinary}, escapedArgs...), " ")}
 
 	log.Debugf("preparing command: `%s` `%#v`", outCmd, outArgs)
 

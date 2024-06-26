@@ -1,0 +1,11 @@
+---
+kind: CephConfig
+spec:
+  global:
+    rbd_cache: "true"
+  osd:
+    rocksdb_perf: "true"
+---
+kind: CephOSDConfig
+spec:
+  allow_crimson: true
