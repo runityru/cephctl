@@ -14,10 +14,13 @@ type OSDDaemon struct {
 
 type ClusterReport struct {
 	AllowCrimson                 bool
+	BackfillfullRatio            float32
 	Checks                       []ClusterStatusCheck
 	Devices                      []Device
+	FullRatio                    float32
 	HealthStatus                 ClusterStatusHealth
 	MutedChecks                  []ClusterStatusMutedCheck
+	NearfullRatio                float32
 	NumMons                      uint8
 	NumMonsInQuorum              uint8
 	NumOSDs                      uint16
@@ -31,6 +34,7 @@ type ClusterReport struct {
 	NumPGsByState                map[string]uint32
 	NumPools                     uint16
 	OSDDaemons                   []OSDDaemon
+	RequireMinCompatClient       string
 	StretchMode                  bool
 	TotalOSDCapacityKB           uint64
 	TotalOSDUsedDataKB           uint64
