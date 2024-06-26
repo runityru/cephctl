@@ -6,20 +6,26 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNewFromDescriptionYAML(t *testing.T) {
+func TestNewFromDescriptionSingle(t *testing.T) {
 	r := require.New(t)
 
-	kind, spec, err := NewFromDescription("testdata/sample_NewFromDescriptionYAML.yaml")
+	descs, err := NewFromDescription("testdata/sample_NewFromDescriptionSingle.yaml")
 	r.NoError(err)
-	r.Equal("CephConfig", kind)
-	r.JSONEq(`{"global":{"rbd_cache":"true"},"osd":{"rocksdb_perf":"true"}}`, string(spec))
+	r.Len(descs, 1)
+	r.Equal("CephConfig", descs[0].Kind)
+	r.JSONEq(`{"global":{"rbd_cache":"true"},"osd":{"rocksdb_perf":"true"}}`, string(descs[0].Spec))
 }
 
-func TestNewFromDescriptionJSON(t *testing.T) {
+func TestNewFromDescriptionMulti(t *testing.T) {
 	r := require.New(t)
 
-	kind, spec, err := NewFromDescription("testdata/sample_NewFromDescriptionJSON.json")
+	descs, err := NewFromDescription("testdata/sample_NewFromDescriptionMulti.yaml")
 	r.NoError(err)
-	r.Equal("CephConfig", kind)
-	r.JSONEq(`{"global":{"rbd_cache":"true"},"osd":{"rocksdb_perf":"true"}}`, string(spec))
+	r.Len(descs, 2)
+
+	r.Equal("CephConfig", descs[0].Kind)
+	r.JSONEq(`{"global":{"rbd_cache":"true"},"osd":{"rocksdb_perf":"true"}}`, string(descs[0].Spec))
+
+	r.Equal("CephOSDConfig", descs[1].Kind)
+	r.JSONEq(`{"allow_crimson":true}`, string(descs[1].Spec))
 }

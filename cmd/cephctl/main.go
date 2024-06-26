@@ -12,6 +12,7 @@ import (
 	applyCmd "github.com/runityru/cephctl/commands/apply"
 	diffCmd "github.com/runityru/cephctl/commands/diff"
 	dumpCephConfigCmd "github.com/runityru/cephctl/commands/dump/cephconfig"
+	dumpCephOSDConfigCmd "github.com/runityru/cephctl/commands/dump/cephosdconfig"
 	healthcheckCmd "github.com/runityru/cephctl/commands/healthcheck"
 	"github.com/runityru/cephctl/differ"
 	"github.com/runityru/cephctl/printer"
@@ -57,8 +58,9 @@ var (
 
 	diffSpecFile = diff.Arg("filename", "Filename with configuration specification").Required().String()
 
-	dump           = app.Command("dump", "Dump runtime configuration")
-	dumpCephConfig = dump.Command("cephconfig", "dump Ceph runtime configuration")
+	dump              = app.Command("dump", "Dump runtime configuration")
+	dumpCephConfig    = dump.Command("cephconfig", "dump Ceph runtime configuration")
+	dumpCephOSDConfig = dump.Command("cephosdconfig", "dump Ceph OSD configuration")
 
 	healthcheck = app.Command("healthcheck", "Perform a cluster healthcheck and print report")
 
@@ -107,8 +109,17 @@ func main() {
 		}
 
 	case dumpCephConfig.FullCommand():
-		log.Debug("running dump command")
+		log.Debug("running dump cephconfig command")
 		if err := dumpCephConfigCmd.DumpCephConfig(ctx, dumpCephConfigCmd.DumpCephConfigConfig{
+			Printer: prntr,
+			Service: svc,
+		}); err != nil {
+			panic(err)
+		}
+
+	case dumpCephOSDConfig.FullCommand():
+		log.Debug("running dump cephosdconfig command")
+		if err := dumpCephOSDConfigCmd.DumpCephOSDConfig(ctx, dumpCephOSDConfigCmd.DumpCephOSDConfigConfig{
 			Printer: prntr,
 			Service: svc,
 		}); err != nil {

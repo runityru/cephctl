@@ -261,9 +261,9 @@ type ReportOSDMap struct {
 	FlagsNum               int                    `json:"flags_num"`
 	FlagsSet               []string               `json:"flags_set"`
 	CrushVersion           int                    `json:"crush_version"`
-	FullRatio              float64                `json:"full_ratio"`
-	BackfillfullRatio      float64                `json:"backfillfull_ratio"`
-	NearfullRatio          float64                `json:"nearfull_ratio"`
+	FullRatio              float32                `json:"full_ratio"`
+	BackfillfullRatio      float32                `json:"backfillfull_ratio"`
+	NearfullRatio          float32                `json:"nearfull_ratio"`
 	ClusterSnapshot        string                 `json:"cluster_snapshot"`
 	PoolMax                int                    `json:"pool_max"`
 	MaxOsd                 int                    `json:"max_osd"`
@@ -1087,6 +1087,10 @@ func (r *Report) ToSvc() (models.ClusterReport, error) {
 		NumPools:                     uint16(numPools),
 		NumPGs:                       numPGs,
 		NumPGsByState:                numPGsByState,
+		BackfillfullRatio:            r.OSDMap.BackfillfullRatio,
+		FullRatio:                    r.OSDMap.FullRatio,
+		NearfullRatio:                r.OSDMap.NearfullRatio,
+		RequireMinCompatClient:       r.OSDMap.MinCompatClient,
 	}, nil
 }
 

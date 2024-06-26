@@ -24,9 +24,19 @@ func (m *Mock) ApplyCephConfig(_ context.Context, cfg models.CephConfig) error {
 	return args.Error(0)
 }
 
+func (m *Mock) ApplyCephOSDConfig(ctx context.Context, cfg models.CephOSDConfig) error {
+	args := m.Called(cfg)
+	return args.Error(0)
+}
+
 func (m *Mock) DiffCephConfig(_ context.Context, cfg models.CephConfig) ([]models.CephConfigDifference, error) {
 	args := m.Called(cfg)
 	return args.Get(0).([]models.CephConfigDifference), args.Error(1)
+}
+
+func (m *Mock) DiffCephOSDConfig(ctx context.Context, cfg models.CephOSDConfig) ([]models.CephOSDConfigDifference, error) {
+	args := m.Called(cfg)
+	return args.Get(0).([]models.CephOSDConfigDifference), args.Error(1)
 }
 
 func (m *Mock) CheckClusterHealth(context.Context, []clusterHealth.ClusterHealthCheck) ([]models.ClusterHealthIndicator, error) {
@@ -37,4 +47,9 @@ func (m *Mock) CheckClusterHealth(context.Context, []clusterHealth.ClusterHealth
 func (m *Mock) DumpConfig(context.Context) (models.CephConfig, error) {
 	args := m.Called()
 	return args.Get(0).(models.CephConfig), args.Error(1)
+}
+
+func (m *Mock) DumpOSDConfig(context.Context) (models.CephOSDConfig, error) {
+	args := m.Called()
+	return args.Get(0).(models.CephOSDConfig), args.Error(1)
 }
