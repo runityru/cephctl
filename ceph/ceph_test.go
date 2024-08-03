@@ -26,7 +26,7 @@ func TestApplyCephOSDConfigOption(t *testing.T) {
 	r := require.New(t)
 
 	c := New("testdata/ceph_mock_ApplyCephOSDConfigOption")
-	err := c.ApplyCephOSDConfigOption(context.Background(), "AllowCrimson", "true")
+	err := c.ApplyCephOSDConfigOption(context.Background(), "allow_crimson", "true")
 	r.NoError(err)
 }
 

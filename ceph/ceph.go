@@ -47,15 +47,15 @@ func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value st
 func (c *ceph) ApplyCephOSDConfigOption(ctx context.Context, key, value string) error {
 	keyArgs := []string{}
 	switch key {
-	case "AllowCrimson":
+	case "allow_crimson":
 		keyArgs = []string{"osd", "set-allow-crimson", "--yes-i-really-mean-it"}
-	case "BackfillfullRatio":
+	case "backfillfull_ratio":
 		keyArgs = []string{"osd", "set-backfillfull-ratio", value}
-	case "FullRatio":
+	case "full_ratio":
 		keyArgs = []string{"osd", "set-full-ratio", value}
-	case "NearfullRatio":
+	case "nearfull_ratio":
 		keyArgs = []string{"osd", "set-nearfull-ratio", value}
-	case "RequireMinCompatClient":
+	case "require_min_compat_client":
 		keyArgs = []string{"osd", "set-require-min-compat-client", value}
 	default:
 		return errors.Errorf("unexpected key: `%s`", key)
