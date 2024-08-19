@@ -4,7 +4,7 @@ go 1.22.2
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
-	github.com/creasty/defaults v1.7.0
+	github.com/creasty/defaults v1.8.0
 	github.com/fatih/color v1.17.0
 	github.com/pkg/errors v0.9.1
 	github.com/r3labs/diff/v3 v3.0.1
