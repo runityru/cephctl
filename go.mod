@@ -1,6 +1,6 @@
 module github.com/runityru/cephctl
 
-go 1.22.2
+go 1.23.1
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
