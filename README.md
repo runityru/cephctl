@@ -87,8 +87,8 @@ to adjust `ceph` binary path to access ceph in container and/or remote machine.
 
 ## Ceph compatibility
 
-All of the changes are tested against Ceph 18.2 (Reef), previous versions are
-not tested and not guaranteed to work.
+All of the changes are tested against Ceph 18.2 (Reef) and 19.2 (Squid), previous
+versions are not tested and not guaranteed to work.
 
 ## Interface compatibility disclaimer
 

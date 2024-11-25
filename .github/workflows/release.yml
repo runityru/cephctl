@@ -9,7 +9,7 @@ on:
 env:
   IMAGE_NAME: ceph
   CEPH_SOURCE_IMAGE: quay.io/ceph/ceph
-  CEPH_VERSION: 18.2.4
+  CEPH_VERSION: 19.2.0
 
 jobs:
   hadolint:
