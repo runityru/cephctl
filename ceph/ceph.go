@@ -45,7 +45,7 @@ func (c *ceph) ApplyCephConfigOption(ctx context.Context, section, key, value st
 }
 
 func (c *ceph) ApplyCephOSDConfigOption(ctx context.Context, key, value string) error {
-	keyArgs := []string{}
+	var keyArgs []string
 	switch key {
 	case "allow_crimson":
 		keyArgs = []string{"osd", "set-allow-crimson", "--yes-i-really-mean-it"}

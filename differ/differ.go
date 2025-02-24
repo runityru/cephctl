@@ -15,6 +15,8 @@ import (
 
 const flattenMapSeparator = ":::"
 
+var ErrUnexpectedOperationType = errors.New("unexpected operation type")
+
 type Differ interface {
 	DiffCephConfig(ctx context.Context, from, to models.CephConfig) ([]models.CephConfigDifference, error)
 	DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDConfig) ([]models.CephOSDConfigDifference, error)
@@ -152,8 +154,7 @@ func (d *differ) DiffCephOSDConfig(ctx context.Context, from, to models.CephOSDC
 			})
 
 		default:
-			log.Warnf("unexpected change type: `%s`", change.Type)
-			break
+			return nil, errors.Wrap(ErrUnexpectedOperationType, change.Type)
 		}
 	}
 
