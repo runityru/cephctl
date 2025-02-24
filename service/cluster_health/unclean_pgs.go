@@ -10,7 +10,7 @@ import (
 func UncleanPGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
 
-	cleanPGs, _ := cr.NumPGsByState["clean"]
+	cleanPGs := cr.NumPGsByState["clean"]
 	uncleanPGs := cr.NumPGs - cleanPGs
 	if uncleanPGs > 0 {
 		st = models.ClusterHealthIndicatorStatusAtRisk

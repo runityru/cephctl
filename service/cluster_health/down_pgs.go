@@ -10,7 +10,7 @@ import (
 func DownPGs(ctx context.Context, cr models.ClusterReport) (models.ClusterHealthIndicator, error) {
 	st := models.ClusterHealthIndicatorStatusGood
 
-	downPGs, _ := cr.NumPGsByState["down"]
+	downPGs := cr.NumPGsByState["down"]
 	if downPGs > 0 {
 		st = models.ClusterHealthIndicatorStatusDangerous
 	}
