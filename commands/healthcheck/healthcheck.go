@@ -35,7 +35,7 @@ func Healthcheck(ctx context.Context, hc HealthcheckConfig) error {
 	}
 
 	for _, indicator := range indicators {
-		var printFn func(string, ...any) = hc.Printer.HiRed
+		printFn := hc.Printer.HiRed
 
 		switch indicator.CurrentValueStatus {
 		case models.ClusterHealthIndicatorStatusGood:
