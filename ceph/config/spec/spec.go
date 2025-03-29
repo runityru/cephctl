@@ -19,14 +19,15 @@ type yamlIntermediate struct {
 	Spec any    `yaml:"spec"`
 }
 
-func NewFromDescription(filename string) ([]Description, error) {
+func NewFromDescription(filename string) (docs []Description, err error) {
 	fp, err := os.Open(filename)
 	if err != nil {
 		return nil, errors.Wrap(err, "error opening spec file")
 	}
-	defer fp.Close()
+	defer func() {
+		err = fp.Close()
+	}()
 
-	docs := []Description{}
 	dec := yaml.NewDecoder(fp)
 	for {
 		v := yamlIntermediate{}
@@ -48,5 +49,5 @@ func NewFromDescription(filename string) ([]Description, error) {
 		})
 	}
 
-	return docs, nil
+	return docs, err
 }
