@@ -68,7 +68,7 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload build artifacts
+      - name: Upload cephctl binaries
         uses: actions/upload-artifact@v4
         with:
           name: cephctl-binaries
@@ -101,16 +101,11 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.24.x'
-      - name: Install dependencies
-        run: go mod download
       - name: Download cephctl binaries
         uses: actions/download-artifact@v4
         with:
           name: cephctl-binaries
+          path: .
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
