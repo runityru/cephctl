@@ -9,7 +9,6 @@ on:
 env:
   IMAGE_NAME: ceph
   CEPH_SOURCE_IMAGE: quay.io/ceph/ceph
-  CEPH_VERSION: 19.2.2
 
 jobs:
   hadolint:
@@ -42,6 +41,14 @@ jobs:
         run: go build -v ./...
 
   build:
+    strategy:
+      matrix:
+        version:
+          - '18.2.2'
+          - '18.2.4'
+          - '19.2.0'
+          - '19.2.1'
+          - '19.2.2'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -84,12 +91,12 @@ jobs:
           context: .
           build-args: |
             CEPH_SOURCE_IMAGE: ${{ env.CEPH_SOURCE_IMAGE }}
-            CEPH_VERSION=${{ env.CEPH_VERSION }}
+            CEPH_VERSION=${{ matrix.version }}
           file: ./Dockerfile
           platforms: amd64
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:v${{ env.CEPH_VERSION }}
-            ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:v${{ env.CEPH_VERSION }}-${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:v${{ env.CEPH_VERSION }}-${{ github.ref_name }}-${{ steps.timestamp.outputs.now }}
+            ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:v${{ matrix.version }}
+            ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:v${{ matrix.version }}-${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }}:v${{ matrix.version }}-${{ github.ref_name }}-${{ steps.timestamp.outputs.now }}
           outputs: type=image,name=ghcr.io/${{ github.repository }}/${{ env.IMAGE_NAME }},annotation-index.org.opencontainers.image.description=${{ env.IMAGE_NAME }}
