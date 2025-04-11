@@ -72,8 +72,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: cephctl-binaries
-          path: |
-            dist
+          path: dist
 
   build-container-images:
     strategy:
@@ -105,6 +104,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: cephctl-binaries
+          path: dist
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
