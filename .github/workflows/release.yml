@@ -81,9 +81,12 @@ jobs:
           - '18.2.2'
           - '18.2.4'
           - '18.2.5'
+          - '18.2.6'
+          - '18.2.7'
           - '19.2.0'
           - '19.2.1'
           - '19.2.2'
+          - '19.2.3'
     runs-on: ubuntu-latest
     permissions:
       contents: write
