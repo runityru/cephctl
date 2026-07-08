@@ -14,7 +14,7 @@ jobs:
   hadolint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
@@ -22,13 +22,13 @@ jobs:
   markdownlint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: articulate/actions-markdownlint@v1
 
   unittests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -50,7 +50,7 @@ jobs:
       - markdownlint
       - unittests
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -104,7 +104,7 @@ jobs:
       - name: Define build timestamp
         id: timestamp
         run: echo "::set-output name=now::$(date -u +'%Y%m%d%H%M%S')"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
