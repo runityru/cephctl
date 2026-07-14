@@ -9,10 +9,10 @@ configuration
 
 ## Main features
 
-- Easy-to-use healthcheck which may contain checks against status & configuration
+* Easy-to-use healthcheck which may contain checks against status & configuration
   and indicate some some not trivial issues
-- Declarative configuration support which is apply only if needed
-- Diff configuration: check what the difference between currently running configuration
+* Declarative configuration support which is apply only if needed
+* Diff configuration: check what the difference between currently running configuration
   and desired or migrated from other cluster
 
 ## Usage
@@ -74,8 +74,8 @@ by `---`.
 
 Each document has two mandatory fields:
 
-- `kind` — defines the type of configuration section (see below)
-- `spec` — the actual configuration payload
+* `kind` — defines the type of configuration section (see below)
+* `spec` — the actual configuration payload
 
 ### kind: CephConfig
 
@@ -89,10 +89,10 @@ spec:
     <key>: "<value>"
 ```
 
-- **section** — any valid Ceph configuration section (e.g., `global`, `mon`,
+* **section** — any valid Ceph configuration section (e.g., `global`, `mon`,
   `osd`, `client.radosgw`, `mgr`, etc.)
-- **key** — any valid Ceph configuration parameter within that section
-- **value** — the value as a string (YAML strings, quoted or unquoted)
+* **key** — any valid Ceph configuration parameter within that section
+* **value** — the value as a string (YAML strings, quoted or unquoted)
 
 Example:
 
@@ -196,24 +196,24 @@ cephctl healthcheck
 
 ## Roadmap
 
-- [x] v0.0.0
-  - [x] Apply declarative configuration for `ceph config`
-  - [x] Dump cluster configuration to CephConfig specification
-  - [x] Diff configuration against running configuration for `ceph config`
-  - [x] Perform healthcheck based on current cluster status
-  - [x] Add healthchecks based on current cluster configuration
-- [x] v0.1.0
-  - [x] Additional healthchecks based on hardware status
-  - [x] FreeBSD support in builds
-  - [x] Remote Ceph cluster access via SSH
-- [x] v0.2.0
-  - [x] Apply/Dump declarative configuration for `ceph osd set-*` stuff
-- [ ] v0.3.0
-  - [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
-- [ ] v0.4.0
-  - [ ] Apply/Dump declarative configuration for Pools
-- [ ] v0.5.0
-  - [ ] Live balancing PGs across OSDs
+* [x] v0.0.0
+  * [x] Apply declarative configuration for `ceph config`
+  * [x] Dump cluster configuration to CephConfig specification
+  * [x] Diff configuration against running configuration for `ceph config`
+  * [x] Perform healthcheck based on current cluster status
+  * [x] Add healthchecks based on current cluster configuration
+* [x] v0.1.0
+  * [x] Additional healthchecks based on hardware status
+  * [x] FreeBSD support in builds
+  * [x] Remote Ceph cluster access via SSH
+* [x] v0.2.0
+  * [x] Apply/Dump declarative configuration for `ceph osd set-*` stuff
+* [ ] v0.3.0
+  * [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
+* [ ] v0.4.0
+  * [ ] Apply/Dump declarative configuration for Pools
+* [ ] v0.5.0
+  * [ ] Live balancing PGs across OSDs
 
 ## Ceph compatibility
 
@@ -243,10 +243,10 @@ Pre-compiled binaries are available on per-release basis and provided on
 [GitHub Releases page](https://github.com/runityru/cephctl/releases). Automatically
 generated changelog is available for each release. And binaries are available for:
 
-- FreeBSD (amd64v1, amd64v2, amd64v3, arm64)
-- Linux (amd64v1, amd64v2, amd64v3, arm64)
-- macOS (amd64v1, amd64v2, amd64v3, arm64)
-- Windows (amd64v1, amd64v2, amd64v3, arm64)
+* FreeBSD (amd64v1, amd64v2, amd64v3, arm64)
+* Linux (amd64v1, amd64v2, amd64v3, arm64)
+* macOS (amd64v1, amd64v2, amd64v3, arm64)
+* Windows (amd64v1, amd64v2, amd64v3, arm64)
 
 Any of them could be used on end-user machine to interact with Ceph
 via SSH just like the following way:
@@ -309,11 +309,11 @@ go build -v -ldflags="-X 'main.appVersion=$(git rev-parse --short HEAD) (trunk b
 
 cephctl is an open source project so you have the following ways to contribute:
 
-- Documentation
-- Fill issues
-- Fix bugs
-- Suggest/implement new features
-- Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/runityru/cephctl/discussions)
+* Documentation
+* Fill issues
+* Fix bugs
+* Suggest/implement new features
+* Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/runityru/cephctl/discussions)
 
 ### Something about guidelines for the code
 
@@ -339,6 +339,6 @@ environment (on a new developer machine for instance).
 
 So all the tests in cephctl are isolated:
 
-- code running any commands runs scripts in tests emulating the expected behavior
-- command output payload is gathered from real installations
-- the only thing you need to run tests is go compiler
+* code running any commands runs scripts in tests emulating the expected behavior
+* command output payload is gathered from real installations
+* the only thing you need to run tests is go compiler
