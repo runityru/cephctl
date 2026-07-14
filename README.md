@@ -64,6 +64,134 @@ Cephctl uses native Ceph CLIs to work with cluster configuration so it's require
 to have Ceph binaries w/ configured `ceph.conf`. Alternatively it's possible
 to adjust `ceph` binary path to access ceph in container and/or remote machine.
 
+## Declarative configuration format
+
+cephctl uses a declarative YAML specification to describe the desired Ceph cluster
+configuration. The file can contain one or more configuration documents separated
+by `---`.
+
+Each document has two mandatory fields:
+
+* `kind` — defines the type of configuration section (see below)
+* `spec` — the actual configuration payload
+
+### kind: CephConfig
+
+Maps to `ceph config set` commands. The spec is a nested map of configuration
+sections and their key-value pairs:
+
+```yaml
+kind: CephConfig
+spec:
+  <section>:
+    <key>: "<value>"
+```
+
+* **section** — any valid Ceph configuration section (e.g., `global`, `mon`,
+  `osd`, `client.radosgw`, `mgr`, etc.)
+* **key** — any valid Ceph configuration parameter within that section
+* **value** — the value as a string (YAML strings, quoted or unquoted)
+
+Example:
+
+```yaml
+kind: CephConfig
+spec:
+  global:
+    rbd_cache: "true"
+    osd_pool_default_size: 3
+  client.radosgw:
+    rgw_cache_lru_size: 100
+    rgw_crypt_require_ssl: "true"
+  osd:
+    rocksdb_perf: "true"
+```
+
+### kind: CephOSDConfig
+
+Maps to `ceph osd set-*` commands. The spec defines OSD-level operational
+parameters:
+
+```yaml
+kind: CephOSDConfig
+spec:
+  allow_crimson: <bool>
+  backfillfull_ratio: <float>
+  full_ratio: <float>
+  nearfull_ratio: <float>
+  require_min_compat_client: <string>
+```
+
+Available fields and their defaults:
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `allow_crimson` | bool | `false` | Enable experimental Crimson OSD backend (risky for production) |
+| `backfillfull_ratio` | float | `0.9` | OSD considered full for backfill purposes at this ratio |
+| `full_ratio` | float | `0.95` | OSD considered full and blocks writes at this ratio |
+| `nearfull_ratio` | float | `0.85` | OSD considered near-full at this ratio |
+| `require_min_compat_client` | string | `reef` | Minimum allowed client version (`luminous`, `nautilus`, `octopus`, `pacific`, `quincy`, `reef`, `squid`) |
+
+### Multi-document example
+
+Both kinds can be combined in a single file using the `---` separator:
+
+```yaml
+---
+kind: CephConfig
+spec:
+  global:
+    rbd_cache: "true"
+  client.radosgw:
+    rgw_cache_lru_size: 100
+---
+kind: CephOSDConfig
+spec:
+  allow_crimson: false
+  backfillfull_ratio: 0.9
+  full_ratio: 0.95
+  nearfull_ratio: 0.85
+  require_min_compat_client: reef
+```
+
+## Health checks
+
+`cephctl healthcheck` runs the following checks and reports the status for each
+indicator. Each check is reported as **GOOD**, **AT_RISK**, **DANGEROUS**, or
+**UNKNOWN**.
+
+| Indicator | Type | GOOD | AT_RISK | DANGEROUS | Description |
+|-----------|------|------|---------|-----------|-------------|
+| `CLUSTER_STATUS` | overall | `HEALTH_OK` | `HEALTH_WARN` | `HEALTH_ERR` | Overall cluster health status from `ceph status` |
+| `QUORUM` | monitors | all mons in quorum | some mons missing | — | Whether all monitor nodes are participating in quorum |
+| `MON_DOWN` | monitors | 0 | >0 | — | Count of monitor nodes that are not up |
+| `OSD_DOWN` | OSD | 0 | >0 | — | Count of OSDs in down state |
+| `OSD_OUT` | OSD | 0 | >0 | — | Count of OSDs in out state |
+| `DOWN_PGS` | placement groups | 0 | — | >0 | PGs stored on down OSDs with no available copy |
+| `UNCLEAN_PGS` | placement groups | 0 | >0 | — | PGs not in clean state (e.g., recovering, backfilling) |
+| `INACTIVE_PGS` | placement groups | 0 | — | >0 | PGs that cannot perform IO (inactive) |
+| `IP_COLLISION` | networking | no collisions | — | collisions found | Duplicate front or back IP addresses across OSD hosts |
+| `MUTES_AMOUNT` | health | 0 | >0 | — | Muted health checks that could mask real issues |
+| `OSD_METADATA_SIZE` | storage | ≤7% | >15% | >20% | OSD metadata (block.db) size as percentage of total capacity |
+| `OSD_NUM_DAEMON_VERSIONS` | versions | 1 version | 2 versions | >2 versions | Number of distinct OSD daemon versions running |
+| `ALLOW_CRIMSON` | OSD | disabled | enabled | — | Whether experimental Crimson OSD is allowed |
+| `DEVICE_HEALTH_WEAROUT` | hardware | no worn devices | wear >50% | wear >75% | SSD/NVMe devices with high wear level |
+
+### Using health checks for monitoring
+
+You can run health checks against a remote cluster via SSH:
+
+```shell
+cephctl --ceph-binary='ssh user@mon01 ceph' healthcheck
+```
+
+Or by setting the environment variable:
+
+```shell
+export CEPHCTL_CEPH_BINARY='ssh user@mon01 ceph'
+cephctl healthcheck
+```
+
 ## Roadmap
 
 * [X] v0.0.0

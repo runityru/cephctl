@@ -1,10 +1,31 @@
 ---
+# CephConfig: maps to `ceph config set` commands
+# Sections: global, mon, osd, mgr, client.radosgw, etc.
 kind: CephConfig
 spec:
   global:
+    # Enable RBD caching for improved performance
     rbd_cache: "true"
+    # Default replication size
+    osd_pool_default_size: "3"
   client.radosgw:
-    rgw_cache_lru_size: 100
+    rgw_cache_lru_size: "100"
+    # Require SSL for RadosGW encryption operations
     rgw_crypt_require_ssl: "true"
   osd:
     rocksdb_perf: "true"
+---
+# CephOSDConfig: maps to `ceph osd set-*` commands
+kind: CephOSDConfig
+spec:
+  # Crimson is experimental - keep disabled for production
+  allow_crimson: false
+  # OSDs at 90% capacity prevent backfill to this OSD
+  backfillfull_ratio: 0.9
+  # OSDs at 95% capacity block all writes
+  full_ratio: 0.95
+  # OSDs at 85% capacity trigger near-full warning
+  nearfull_ratio: 0.85
+  # Minimum client version allowed to connect (luminous, nautilus,
+  # octopus, pacific, quincy, reef, squid)
+  require_min_compat_client: reef
