@@ -5,19 +5,20 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/runityru/cephctl.svg)](https://pkg.go.dev/github.com/runityru/cephctl)
 
 Small utility to control Ceph cluster configuration just like any other declarative
-    configuration
+configuration
 
 ## Main features
 
-* Easy-to-use healthcheck which may contain checks against status & configuration
-    and indicate some some not trivial issues
-* Declarative configuration support which is apply only if needed
-* Diff configuration: check what the difference between currently running configuration
-    and desired or migrated from other cluster
+- Easy-to-use healthcheck which may contain checks against status & configuration
+  and indicate some some not trivial issues
+- Declarative configuration support which is apply only if needed
+- Diff configuration: check what the difference between currently running configuration
+  and desired or migrated from other cluster
 
 ## Usage
 
 <!-- markdownlint-disable MD013 -->
+
 ```shell
 $ ./cephctl
 usage: cephctl [<flags>] <command> [<args> ...]
@@ -56,6 +57,7 @@ version
     Print version and exit
 
 ```
+
 <!-- markdownlint-enable MD013 -->
 
 ## How it works
@@ -72,8 +74,8 @@ by `---`.
 
 Each document has two mandatory fields:
 
-* `kind` — defines the type of configuration section (see below)
-* `spec` — the actual configuration payload
+- `kind` — defines the type of configuration section (see below)
+- `spec` — the actual configuration payload
 
 ### kind: CephConfig
 
@@ -87,10 +89,10 @@ spec:
     <key>: "<value>"
 ```
 
-* **section** — any valid Ceph configuration section (e.g., `global`, `mon`,
+- **section** — any valid Ceph configuration section (e.g., `global`, `mon`,
   `osd`, `client.radosgw`, `mgr`, etc.)
-* **key** — any valid Ceph configuration parameter within that section
-* **value** — the value as a string (YAML strings, quoted or unquoted)
+- **key** — any valid Ceph configuration parameter within that section
+- **value** — the value as a string (YAML strings, quoted or unquoted)
 
 Example:
 
@@ -124,13 +126,13 @@ spec:
 
 Available fields and their defaults:
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `allow_crimson` | bool | `false` | Enable experimental Crimson OSD backend (risky for production) |
-| `backfillfull_ratio` | float | `0.9` | OSD considered full for backfill purposes at this ratio |
-| `full_ratio` | float | `0.95` | OSD considered full and blocks writes at this ratio |
-| `nearfull_ratio` | float | `0.85` | OSD considered near-full at this ratio |
-| `require_min_compat_client` | string | `reef` | Minimum allowed client version (`luminous`, `nautilus`, `octopus`, `pacific`, `quincy`, `reef`, `squid`) |
+| Field                       | Type   | Default | Description                                                                                              |
+| --------------------------- | ------ | ------- | -------------------------------------------------------------------------------------------------------- |
+| `allow_crimson`             | bool   | `false` | Enable experimental Crimson OSD backend (risky for production)                                           |
+| `backfillfull_ratio`        | float  | `0.9`   | OSD considered full for backfill purposes at this ratio                                                  |
+| `full_ratio`                | float  | `0.95`  | OSD considered full and blocks writes at this ratio                                                      |
+| `nearfull_ratio`            | float  | `0.85`  | OSD considered near-full at this ratio                                                                   |
+| `require_min_compat_client` | string | `reef`  | Minimum allowed client version (`luminous`, `nautilus`, `octopus`, `pacific`, `quincy`, `reef`, `squid`) |
 
 ### Multi-document example
 
@@ -160,22 +162,22 @@ spec:
 indicator. Each check is reported as **GOOD**, **AT_RISK**, **DANGEROUS**, or
 **UNKNOWN**.
 
-| Indicator | Type | GOOD | AT_RISK | DANGEROUS | Description |
-|-----------|------|------|---------|-----------|-------------|
-| `CLUSTER_STATUS` | overall | `HEALTH_OK` | `HEALTH_WARN` | `HEALTH_ERR` | Overall cluster health status from `ceph status` |
-| `QUORUM` | monitors | all mons in quorum | some mons missing | — | Whether all monitor nodes are participating in quorum |
-| `MON_DOWN` | monitors | 0 | >0 | — | Count of monitor nodes that are not up |
-| `OSD_DOWN` | OSD | 0 | >0 | — | Count of OSDs in down state |
-| `OSD_OUT` | OSD | 0 | >0 | — | Count of OSDs in out state |
-| `DOWN_PGS` | placement groups | 0 | — | >0 | PGs stored on down OSDs with no available copy |
-| `UNCLEAN_PGS` | placement groups | 0 | >0 | — | PGs not in clean state (e.g., recovering, backfilling) |
-| `INACTIVE_PGS` | placement groups | 0 | — | >0 | PGs that cannot perform IO (inactive) |
-| `IP_COLLISION` | networking | no collisions | — | collisions found | Duplicate front or back IP addresses across OSD hosts |
-| `MUTES_AMOUNT` | health | 0 | >0 | — | Muted health checks that could mask real issues |
-| `OSD_METADATA_SIZE` | storage | ≤7% | >15% | >20% | OSD metadata (block.db) size as percentage of total capacity |
-| `OSD_NUM_DAEMON_VERSIONS` | versions | 1 version | 2 versions | >2 versions | Number of distinct OSD daemon versions running |
-| `ALLOW_CRIMSON` | OSD | disabled | enabled | — | Whether experimental Crimson OSD is allowed |
-| `DEVICE_HEALTH_WEAROUT` | hardware | no worn devices | wear >50% | wear >75% | SSD/NVMe devices with high wear level |
+| Indicator                 | Type             | GOOD               | AT_RISK           | DANGEROUS        | Description                                                  |
+| ------------------------- | ---------------- | ------------------ | ----------------- | ---------------- | ------------------------------------------------------------ |
+| `CLUSTER_STATUS`          | overall          | `HEALTH_OK`        | `HEALTH_WARN`     | `HEALTH_ERR`     | Overall cluster health status from `ceph status`             |
+| `QUORUM`                  | monitors         | all mons in quorum | some mons missing | —                | Whether all monitor nodes are participating in quorum        |
+| `MON_DOWN`                | monitors         | 0                  | >0                | —                | Count of monitor nodes that are not up                       |
+| `OSD_DOWN`                | OSD              | 0                  | >0                | —                | Count of OSDs in down state                                  |
+| `OSD_OUT`                 | OSD              | 0                  | >0                | —                | Count of OSDs in out state                                   |
+| `DOWN_PGS`                | placement groups | 0                  | —                 | >0               | PGs stored on down OSDs with no available copy               |
+| `UNCLEAN_PGS`             | placement groups | 0                  | >0                | —                | PGs not in clean state (e.g., recovering, backfilling)       |
+| `INACTIVE_PGS`            | placement groups | 0                  | —                 | >0               | PGs that cannot perform IO (inactive)                        |
+| `IP_COLLISION`            | networking       | no collisions      | —                 | collisions found | Duplicate front or back IP addresses across OSD hosts        |
+| `MUTES_AMOUNT`            | health           | 0                  | >0                | —                | Muted health checks that could mask real issues              |
+| `OSD_METADATA_SIZE`       | storage          | ≤7%                | >15%              | >20%             | OSD metadata (block.db) size as percentage of total capacity |
+| `OSD_NUM_DAEMON_VERSIONS` | versions         | 1 version          | 2 versions        | >2 versions      | Number of distinct OSD daemon versions running               |
+| `ALLOW_CRIMSON`           | OSD              | disabled           | enabled           | —                | Whether experimental Crimson OSD is allowed                  |
+| `DEVICE_HEALTH_WEAROUT`   | hardware         | no worn devices    | wear >50%         | wear >75%        | SSD/NVMe devices with high wear level                        |
 
 ### Using health checks for monitoring
 
@@ -194,24 +196,24 @@ cephctl healthcheck
 
 ## Roadmap
 
-* [X] v0.0.0
-  * [X] Apply declarative configuration for `ceph config`
-  * [X] Dump cluster configuration to CephConfig specification
-  * [X] Diff configuration against running configuration for `ceph config`
-  * [X] Perform healthcheck based on current cluster status
-  * [X] Add healthchecks based on current cluster configuration
-* [X] v0.1.0
-  * [X] Additional healthchecks based on hardware status
-  * [X] FreeBSD support in builds
-  * [X] Remote Ceph cluster access via SSH
-* [X] v0.2.0
-  * [X] Apply/Dump declarative configuration for `ceph osd set-*` stuff
-* [ ] v0.3.0
-  * [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
-* [ ] v0.4.0
-  * [ ] Apply/Dump declarative configuration for Pools
-* [ ] v0.5.0
-  * [ ] Live balancing PGs across OSDs
+- [x] v0.0.0
+  - [x] Apply declarative configuration for `ceph config`
+  - [x] Dump cluster configuration to CephConfig specification
+  - [x] Diff configuration against running configuration for `ceph config`
+  - [x] Perform healthcheck based on current cluster status
+  - [x] Add healthchecks based on current cluster configuration
+- [x] v0.1.0
+  - [x] Additional healthchecks based on hardware status
+  - [x] FreeBSD support in builds
+  - [x] Remote Ceph cluster access via SSH
+- [x] v0.2.0
+  - [x] Apply/Dump declarative configuration for `ceph osd set-*` stuff
+- [ ] v0.3.0
+  - [ ] Apply/Dump declarative configuration for Ceph Object Gateway (rgw)
+- [ ] v0.4.0
+  - [ ] Apply/Dump declarative configuration for Pools
+- [ ] v0.5.0
+  - [ ] Live balancing PGs across OSDs
 
 ## Ceph compatibility
 
@@ -224,11 +226,11 @@ If you gonna use cephctl as a library for your purposes please feel free to
 but please note a few things:
 
 1. Cephctl doesn't use internal packages to allow you to do whatever you like.
-    Cephctl project doesn't aim to limit your usage.
+   Cephctl project doesn't aim to limit your usage.
 2. Internal program interfaces are not guaranteed to be stable between releases
-    since they're written and serve for internal purposes.
+   since they're written and serve for internal purposes.
 3. CLI interface (until 1.0.x at least) is also not guaranteed to be stable:
-    subcommands and options are subjects to change between versions.
+   subcommands and options are subjects to change between versions.
 
 ## Installation
 
@@ -241,10 +243,10 @@ Pre-compiled binaries are available on per-release basis and provided on
 [GitHub Releases page](https://github.com/runityru/cephctl/releases). Automatically
 generated changelog is available for each release. And binaries are available for:
 
-* FreeBSD (amd64v1, amd64v2, amd64v3, arm64)
-* Linux (amd64v1, amd64v2, amd64v3, arm64)
-* macOS (amd64v1, amd64v2, amd64v3, arm64)
-* Windows (amd64v1, amd64v2, amd64v3, arm64)
+- FreeBSD (amd64v1, amd64v2, amd64v3, arm64)
+- Linux (amd64v1, amd64v2, amd64v3, arm64)
+- macOS (amd64v1, amd64v2, amd64v3, arm64)
+- Windows (amd64v1, amd64v2, amd64v3, arm64)
 
 Any of them could be used on end-user machine to interact with Ceph
 via SSH just like the following way:
@@ -296,20 +298,22 @@ goreleaser build --snapshot --clean
 or manually via Go compiler
 
 <!-- markdownlint-disable MD013 -->
+
 ```shell
 go build -v -ldflags="-X 'main.appVersion=$(git rev-parse --short HEAD) (trunk build)' -X 'main.buildTimestamp=$(date -u +%Y-%m-%dT%H:%m:%SZ)'" -o dist/cephctl ./cmd/cephctl/...
 ```
+
 <!-- markdownlint-enable MD013 -->
 
 ## Contribution
 
 cephctl is an open source project so you have the following ways to contribute:
 
-* Documentation
-* Fill issues
-* Fix bugs
-* Suggest/implement new features
-* Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/runityru/cephctl/discussions)
+- Documentation
+- Fill issues
+- Fix bugs
+- Suggest/implement new features
+- Or any other way, if you have any doubts please fill free to [open discussion](https://github.com/runityru/cephctl/discussions)
 
 ### Something about guidelines for the code
 
@@ -335,6 +339,6 @@ environment (on a new developer machine for instance).
 
 So all the tests in cephctl are isolated:
 
-* code running any commands runs scripts in tests emulating the expected behavior
-* command output payload is gathered from real installations
-* the only thing you need to run tests is go compiler
+- code running any commands runs scripts in tests emulating the expected behavior
+- command output payload is gathered from real installations
+- the only thing you need to run tests is go compiler
