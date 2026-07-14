@@ -143,8 +143,9 @@ const (
 
 	// ClusterHealthIndicatorTypeUncleanPGs reflects amount of PGs which are not in clean state
 	//
-	// Description: Inactive PGs indicator shows how many PGs are inactive i.e. can not be
-	// 	used to perform IO operations at the moment.
+	// Description: Unclean PGs indicator shows how many PGs are not in clean state i.e.
+	// 	they are in states like recovering, backfilling, peering, etc. This is normal
+	// 	during maintenance operations but may indicate issues if persistent.
 	//
 	// Ref: https://docs.ceph.com/en/latest/rados/operations/monitoring-osd-pg/#monitoring-pg-states
 	//
