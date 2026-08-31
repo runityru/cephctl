@@ -8,7 +8,7 @@ require (
 	github.com/fatih/color v1.19.0
 	github.com/pkg/errors v0.9.1
 	github.com/r3labs/diff/v3 v3.0.2
-	github.com/sirupsen/logrus v1.10.1
+	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
 	github.com/teran/go-ptr v1.1.0
 	gopkg.in/yaml.v3 v3.0.1
