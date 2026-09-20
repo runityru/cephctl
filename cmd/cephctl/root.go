@@ -73,6 +73,9 @@ func init() {
 	rootCmd.AddCommand(dumpCommand)
 	rootCmd.AddCommand(healthcheckCommand)
 	rootCmd.AddCommand(versionCommand)
+
+	dumpCommand.AddCommand(dumpCephConfigCommand)
+	dumpCommand.AddCommand(dumpCephOSDConfigCommand)
 }
 
 var applyCommand = &cobra.Command{
