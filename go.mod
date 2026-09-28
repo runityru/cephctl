@@ -3,7 +3,7 @@ module github.com/runityru/cephctl
 go 1.25.0
 
 require (
-	github.com/creasty/defaults v1.8.0
+	github.com/creasty/defaults v1.11.0
 	github.com/fatih/color v1.19.0
 	github.com/pkg/errors v0.9.1
 	github.com/r3labs/diff/v3 v3.0.2
