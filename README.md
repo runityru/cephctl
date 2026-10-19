@@ -342,3 +342,39 @@ So all the tests in cephctl are isolated:
 * code running any commands runs scripts in tests emulating the expected behavior
 * command output payload is gathered from real installations
 * the only thing you need to run tests is go compiler
+
+## End-to-end tests against real Ceph
+
+In addition to the isolated unit tests above, cephctl ships end-to-end tests
+that run the compiled `cephctl` binary inside a real single-node Ceph demo
+container (squid and tentacle release trains) via
+`github.com/teran/go-docker-testsuite`. These cover the exact `cephctl dump
+cephosdconfig` path from [issue #115](https://github.com/runityru/cephctl/issues/115),
+ensuring the report decoding no longer panics on Ceph ≥19.
+
+The e2e tests are gated behind the `e2e` build tag and are **excluded** from the
+normal `go build ./...` / `go vet ./...` / `go test ./...` runs. They require:
+
+* Go 1.27.2+ (matching the module's go directive)
+* a running Docker daemon
+* a few minutes for the Ceph container to bootstrap
+
+Run them from the repository root:
+
+```sh
+go test -tags e2e -v ./...
+```
+
+Target a single Ceph image via `CEPH_IMAGE` (defaults to v19.2.6 and v20.2.4):
+
+```sh
+CEPH_IMAGE=ghcr.io/teran/ceph-container/ceph:v20.2.4 go test -tags e2e -v ./...
+```
+
+When Docker is unavailable the tests `t.Skip` instead of failing.
+
+> **Note:** `github.com/teran/go-docker-testsuite` is currently pulled in through
+> a local `replace` directive in `go.mod` (pointing at the sibling checkout)
+> because the `docker.Container.Exec` and `ceph.WithBinds` APIs are not yet in a
+> published release. Once a release containing them is cut, the `replace` can be
+> dropped in favour of a tagged version.

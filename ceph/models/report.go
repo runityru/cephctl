@@ -29,11 +29,11 @@ type ReportMonMapMon struct {
 			Nonce int    `json:"nonce"`
 		} `json:"addrvec"`
 	} `json:"public_addrs"`
-	Addr          string  `json:"addr"`
-	PublicAddr    string  `json:"public_addr"`
-	Priority      int     `json:"priority"`
-	Weight        float64 `json:"weight"`
-	CrushLocation string  `json:"crush_location"`
+	Addr          string          `json:"addr"`
+	PublicAddr    string          `json:"public_addr"`
+	Priority      int             `json:"priority"`
+	Weight        float64         `json:"weight"`
+	CrushLocation json.RawMessage `json:"crush_location"`
 }
 
 type ReportMonMap struct {
